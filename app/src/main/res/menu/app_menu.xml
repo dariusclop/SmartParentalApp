@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/dashboardPage"
+        android:icon="@drawable/ic_dashboard"
+        android:title="@string/dashboardPage"/>
+    <item
+        android:id="@+id/locationPage"
+        android:icon="@drawable/ic_location"
+        android:title="@string/locationPage"/>
+    <item
+        android:id="@+id/loginPage"
+        android:icon="@drawable/ic_user"
+        android:title="@string/loginPage"/>
+</menu>

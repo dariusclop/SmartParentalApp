@@ -1,3 +1,13 @@
 <resources>
+
+    <!--  Menu Strings  -->
     <string name="app_name">SmartParentalApp</string>
+    <string name="dashboardPage">Dashboard</string>
+    <string name="setRestrictionsPage">Restrictions</string>
+    <string name="childrenAllowedPage">Allowed Activities</string>
+    <string name="locationPage">Location</string>
+    <string name="profilePage">Profile</string>
+    <string name="loginPage">Login</string>
+    <string name="registerPage">Register</string>
+
 </resources>
