@@ -10,4 +10,11 @@
     <string name="loginPage">Login</string>
     <string name="registerPage">Register</string>
 
+    <!--  Label Strings  -->
+    <string name="enterEmail">Enter Email here...</string>
+    <string name="enterPassword">Enter Password here...</string>
+    <string name="loginLabel">LOGIN</string>
+    <string name="signInAccount">SIGN IN</string>
+    <string name="createAccount">CREATE ACCOUNT</string>
+
 </resources>

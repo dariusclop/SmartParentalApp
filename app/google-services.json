@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "233316475866",
+    "firebase_url": "https://smartparentalapp.firebaseio.com",
+    "project_id": "smartparentalapp",
+    "storage_bucket": "smartparentalapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:233316475866:android:09ba1e50946771284096e3",
+        "android_client_info": {
+          "package_name": "com.example.smartparentalapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "233316475866-762s93n0sj49f2na1cabq8qkp0uj32o9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsWc6Yt51soTS8smih9U_kAcbjSr8kqpw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "233316475866-762s93n0sj49f2na1cabq8qkp0uj32o9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

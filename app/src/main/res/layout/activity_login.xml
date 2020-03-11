@@ -4,11 +4,105 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    android:background="#7AC0BB"
+    tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="on Login"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/signInButton"
+            android:layout_width="180sp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@color/colorPrimary"
+            android:text="@string/signInAccount"
+            android:textColor="#ffffff"
+            app:layout_constraintBottom_toTopOf="@+id/createAccountButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.47"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/passwordField"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <Button
+            android:id="@+id/createAccountButton"
+            android:layout_width="180sp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="44dp"
+            android:background="@color/colorPrimary"
+            android:text="@string/createAccount"
+            android:textColor="#ffffff"
+            app:layout_constraintBottom_toTopOf="@+id/frameLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.471"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/loginTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="sans-serif"
+            android:text="@string/loginLabel"
+            android:textSize="24dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/emailField"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.47"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/passwordField"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="416dp"
+            android:autofillHints="@string/enterPassword"
+            android:ems="10"
+            android:hint="@string/enterPassword"
+            android:inputType="textPassword"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.47"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/emailField"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autofillHints="@string/enterEmail"
+            android:ems="10"
+            android:hint="@string/enterEmail"
+            android:inputType="textEmailAddress"
+            app:layout_constraintBottom_toTopOf="@+id/passwordField"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.47"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.89" />
+
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:layout_editor_absoluteX="0dp">
+
+            <!-- Menu content -->
+
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottom_navigation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:background="@color/colorPrimary"
+                app:itemIconTint="@color/white"
+                app:itemTextColor="@color/white"
+                app:menu="@menu/app_menu" />
+
+        </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

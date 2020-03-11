@@ -17,9 +17,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getSupportActionBar().hide();
+
+        //Menu set click listener
         BottomNavigationView clickedMenuItem = findViewById(R.id.bottom_navigation);
         clickedMenuItem.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
     }
+
+    //Menu click listener
     private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         public boolean onNavigationItemSelected(MenuItem item) {
