@@ -16,5 +16,6 @@
     <string name="loginLabel">LOGIN</string>
     <string name="signInAccount">SIGN IN</string>
     <string name="createAccount">CREATE ACCOUNT</string>
+    <string name="logoutLabel">LOGOUT</string>
 
 </resources>
