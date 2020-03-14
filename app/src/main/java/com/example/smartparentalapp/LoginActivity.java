@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
 import android.widget.Button;
 import android.widget.EditText;
 import android.view.MenuItem;
@@ -25,11 +26,11 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth dbAuth;
     private EditText mEmailField;
     private EditText mPasswordField;
-    private boolean firstTimeRedirect = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         dbAuth = FirebaseAuth.getInstance();
+        FirebaseUser userSignedIn = dbAuth.getCurrentUser();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         getSupportActionBar().hide();
@@ -44,6 +45,13 @@ public class LoginActivity extends AppCompatActivity {
 
         //Menu set click listener
         BottomNavigationView clickedMenuItem = findViewById(R.id.bottom_navigation);
+        if(userSignedIn != null) {
+            clickedMenuItem.getMenu().removeItem(R.id.loginPage);
+        }
+        else
+        {
+            clickedMenuItem.getMenu().removeItem(R.id.profilePage);
+        }
         clickedMenuItem.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
 
         //Button click listener
@@ -71,10 +79,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void updateUI(FirebaseUser account){
-        if(account != null && firstTimeRedirect){
+        if(account != null){
             Toast.makeText(this,"Signed in",Toast.LENGTH_LONG).show();
             startActivity(new Intent(this,  MainActivity.class));
-            firstTimeRedirect = false;
         }else {
             Toast.makeText(this,"Account sign in failed",Toast.LENGTH_LONG).show();
         }
@@ -105,20 +112,40 @@ public class LoginActivity extends AppCompatActivity {
     private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         public boolean onNavigationItemSelected(MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.dashboardPage:
-                    Intent dashboardIntent = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivityForResult(dashboardIntent, 0);
-                    return true;
-                case R.id.locationPage:
-                    Intent locationIntent = new Intent(getApplicationContext(), LocationActivity.class);
-                    startActivityForResult(locationIntent, 0);
-                    return true;
-                case R.id.loginPage:
-                    Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                    startActivityForResult(loginIntent, 0);
-                    return true;
+            FirebaseUser userSignedIn = dbAuth.getCurrentUser();
+            if(userSignedIn != null) {
+                switch (item.getItemId()) {
+                    case R.id.dashboardPage:
+                        Intent dashboardIntent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivityForResult(dashboardIntent, 0);
+                        return true;
+                    case R.id.locationPage:
+                        Intent locationIntent = new Intent(getApplicationContext(), LocationActivity.class);
+                        startActivityForResult(locationIntent, 0);
+                        return true;
+                    case R.id.profilePage:
+                        Intent loginIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+                        startActivityForResult(loginIntent, 0);
+                        return true;
 
+                }
+            }
+            else {
+                switch (item.getItemId()) {
+                    case R.id.dashboardPage:
+                        Intent dashboardIntent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivityForResult(dashboardIntent, 0);
+                        return true;
+                    case R.id.locationPage:
+                        Intent locationIntent = new Intent(getApplicationContext(), LocationActivity.class);
+                        startActivityForResult(locationIntent, 0);
+                        return true;
+                    case R.id.loginPage:
+                        Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivityForResult(loginIntent, 0);
+                        return true;
+
+                }
             }
             return true;
         }

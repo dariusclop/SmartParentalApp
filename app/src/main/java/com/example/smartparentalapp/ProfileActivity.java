@@ -10,7 +10,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class LocationActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity {
     private FirebaseAuth dbAuth;
 
     @Override
@@ -18,7 +18,7 @@ public class LocationActivity extends AppCompatActivity {
         dbAuth = FirebaseAuth.getInstance();
         FirebaseUser userSignedIn = dbAuth.getCurrentUser();
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_location);
+        setContentView(R.layout.activity_profile);
         getSupportActionBar().hide();
 
         //Menu set click listener

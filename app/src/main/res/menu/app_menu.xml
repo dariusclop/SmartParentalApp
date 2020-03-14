@@ -13,4 +13,8 @@
         android:id="@+id/loginPage"
         android:icon="@drawable/ic_user"
         android:title="@string/loginPage"/>
+    <item
+        android:id="@+id/profilePage"
+        android:icon="@drawable/ic_user"
+        android:title="@string/profilePage"/>
 </menu>
