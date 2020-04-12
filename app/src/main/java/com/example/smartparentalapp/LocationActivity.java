@@ -24,10 +24,11 @@ public class LocationActivity extends AppCompatActivity {
     private FirebaseAuth dbAuth;
     private FusedLocationProviderClient fusedLocationClient;
     private Location currentLocation;
+    private MenuHelper menuHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        menuHelper = new MenuHelper();
         dbAuth = FirebaseAuth.getInstance();
         FirebaseUser userSignedIn = dbAuth.getCurrentUser();
 
@@ -72,40 +73,8 @@ public class LocationActivity extends AppCompatActivity {
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         public boolean onNavigationItemSelected(MenuItem item) {
             FirebaseUser userSignedIn = dbAuth.getCurrentUser();
-            if(userSignedIn != null) {
-                switch (item.getItemId()) {
-                    case R.id.dashboardPage:
-                        Intent dashboardIntent = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivityForResult(dashboardIntent, 0);
-                        return true;
-                    case R.id.locationPage:
-                        Intent locationIntent = new Intent(getApplicationContext(), LocationActivity.class);
-                        startActivityForResult(locationIntent, 0);
-                        return true;
-                    case R.id.profilePage:
-                        Intent loginIntent = new Intent(getApplicationContext(), ProfileActivity.class);
-                        startActivityForResult(loginIntent, 0);
-                        return true;
-
-                }
-            }
-            else {
-                switch (item.getItemId()) {
-                    case R.id.dashboardPage:
-                        Intent dashboardIntent = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivityForResult(dashboardIntent, 0);
-                        return true;
-                    case R.id.locationPage:
-                        Intent locationIntent = new Intent(getApplicationContext(), LocationActivity.class);
-                        startActivityForResult(locationIntent, 0);
-                        return true;
-                    case R.id.loginPage:
-                        Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                        startActivityForResult(loginIntent, 0);
-                        return true;
-
-                }
-            }
+            Intent intent = menuHelper.navigationMenu(item, userSignedIn, getApplicationContext());
+            startActivityForResult(intent, 0);
             return true;
         }
     };

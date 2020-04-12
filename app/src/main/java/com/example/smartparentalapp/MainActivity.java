@@ -16,8 +16,11 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
     private FirebaseAuth dbAuth;
+    private MenuHelper menuHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        menuHelper = new MenuHelper();
         dbAuth = FirebaseAuth.getInstance();
         FirebaseUser userSignedIn = dbAuth.getCurrentUser();
         super.onCreate(savedInstanceState);
@@ -26,11 +29,9 @@ public class MainActivity extends AppCompatActivity {
 
         //Menu set click listener
         BottomNavigationView clickedMenuItem = findViewById(R.id.bottom_navigation);
-        if(userSignedIn != null) {
+        if (userSignedIn != null) {
             clickedMenuItem.getMenu().removeItem(R.id.loginPage);
-        }
-        else
-        {
+        } else {
             clickedMenuItem.getMenu().removeItem(R.id.profilePage);
         }
         clickedMenuItem.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
@@ -41,40 +42,8 @@ public class MainActivity extends AppCompatActivity {
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         public boolean onNavigationItemSelected(MenuItem item) {
             FirebaseUser userSignedIn = dbAuth.getCurrentUser();
-            if(userSignedIn != null) {
-                switch (item.getItemId()) {
-                    case R.id.dashboardPage:
-                        Intent dashboardIntent = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivityForResult(dashboardIntent, 0);
-                        return true;
-                    case R.id.locationPage:
-                        Intent locationIntent = new Intent(getApplicationContext(), LocationActivity.class);
-                        startActivityForResult(locationIntent, 0);
-                        return true;
-                    case R.id.profilePage:
-                        Intent loginIntent = new Intent(getApplicationContext(), ProfileActivity.class);
-                        startActivityForResult(loginIntent, 0);
-                        return true;
-
-                }
-            }
-            else {
-                switch (item.getItemId()) {
-                    case R.id.dashboardPage:
-                        Intent dashboardIntent = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivityForResult(dashboardIntent, 0);
-                        return true;
-                    case R.id.locationPage:
-                        Intent locationIntent = new Intent(getApplicationContext(), LocationActivity.class);
-                        startActivityForResult(locationIntent, 0);
-                        return true;
-                    case R.id.loginPage:
-                        Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                        startActivityForResult(loginIntent, 0);
-                        return true;
-
-                }
-            }
+            Intent intent = menuHelper.navigationMenu(item, userSignedIn, getApplicationContext());
+            startActivityForResult(intent, 0);
             return true;
         }
     };
