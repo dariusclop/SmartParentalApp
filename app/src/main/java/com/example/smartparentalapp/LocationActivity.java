@@ -5,13 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.MenuItem;
 import android.location.Location;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
@@ -25,10 +28,13 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LocationActivity extends AppCompatActivity {
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
+    private boolean isLocationActivated = false;
     private FirebaseAuth dbAuth;
     private FusedLocationProviderClient fusedLocationClient;
     private Location currentLocation;
     private MenuHelper menuHelper;
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +48,24 @@ public class LocationActivity extends AppCompatActivity {
 
         //Location
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        locationRequest = LocationRequest.create();
+        locationRequest.setInterval(5000);
+        locationRequest.setFastestInterval(3000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        //Location Callback function
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    // Update UI with location data
+                    // ...
+                }
+            }
+        };
 
         //Menu set click listener
         BottomNavigationView clickedMenuItem = findViewById(R.id.bottom_navigation);
@@ -58,6 +82,14 @@ public class LocationActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         createLocationRequest();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(isLocationActivated) {
+            startLocationUpdates();
+        }
     }
 
     private void getLastLocation() {
@@ -80,11 +112,6 @@ public class LocationActivity extends AppCompatActivity {
     }
 
     protected void createLocationRequest() {
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setInterval(5000);
-        locationRequest.setFastestInterval(3000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest);
 
@@ -95,6 +122,7 @@ public class LocationActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                 getLastLocation();
+                isLocationActivated = true;
             }
         });
 
@@ -103,6 +131,7 @@ public class LocationActivity extends AppCompatActivity {
             public void onFailure(@NonNull Exception e) {
                 if (e instanceof ResolvableApiException) {
                     Toast.makeText(getApplicationContext(), "Location fetching failed. Make sure to have location activated", Toast.LENGTH_LONG).show();
+                    isLocationActivated = false;
                     try {
                         ResolvableApiException resolvable = (ResolvableApiException) e;
                         resolvable.startResolutionForResult(LocationActivity.this,
@@ -113,6 +142,12 @@ public class LocationActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void startLocationUpdates() {
+        fusedLocationClient.requestLocationUpdates(locationRequest,
+                locationCallback,
+                Looper.getMainLooper());
     }
 
     //Menu click listener
