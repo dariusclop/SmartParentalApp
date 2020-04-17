@@ -42,22 +42,6 @@ public class LocationActivity extends AppCompatActivity {
 
         //Location
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if(location == null) {
-                            Toast.makeText(getApplicationContext(), "Location fetching failed. Make sure to have location activated", Toast.LENGTH_LONG).show();
-                        }
-                        if(currentLocation != null && location.equals(currentLocation)) {
-                            Toast.makeText(getApplicationContext(), "Location similar to the last location", Toast.LENGTH_LONG).show();
-                        }
-                        if (location != null) {
-                            currentLocation = location;
-                            Toast.makeText(getApplicationContext(), "Location fetching success", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
 
         //Menu set click listener
         BottomNavigationView clickedMenuItem = findViewById(R.id.bottom_navigation);
