@@ -21,7 +21,6 @@ public class MenuHelper extends AppCompatActivity {
                 case R.id.profilePage:
                     Intent loginIntent = new Intent(currentContext, ProfileActivity.class);
                     return loginIntent;
-
             }
         }
         else {
@@ -35,7 +34,6 @@ public class MenuHelper extends AppCompatActivity {
                 case R.id.loginPage:
                     Intent loginIntent = new Intent(currentContext, LoginActivity.class);
                     return loginIntent;
-
             }
         }
         return null;
