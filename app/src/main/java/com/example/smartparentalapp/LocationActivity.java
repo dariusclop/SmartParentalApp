@@ -26,6 +26,12 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -33,16 +39,20 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class LocationActivity extends AppCompatActivity {
+public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback {
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     protected static final int PERMISSION_REQUEST_CODE = 0x1111;
     private boolean isLocationActivated = false;
     private FirebaseAuth dbAuth;
     private FusedLocationProviderClient fusedLocationClient;
     private Location currentLocation;
+    private double currentLocationLatitude;
+    private double currentLocationLongitude;
     private MenuHelper menuHelper;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
+    private GoogleMap mMap;
+    private SupportMapFragment mapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,13 +73,10 @@ public class LocationActivity extends AppCompatActivity {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 if (locationResult == null) {
-                    Toast.makeText(getApplicationContext(), "In Callback function", Toast.LENGTH_LONG).show();
                     return;
                 }
                 for (Location location : locationResult.getLocations()) {
-                    // Update UI with location data
-                    // ...
-                    Toast.makeText(getApplicationContext(), "In Callback function", Toast.LENGTH_LONG).show();
+                    setLocation(location);
                 }
             }
         };
@@ -83,6 +90,10 @@ public class LocationActivity extends AppCompatActivity {
             clickedMenuItem.getMenu().removeItem(R.id.profilePage);
         }
         clickedMenuItem.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
+
+        //Add maps fragment
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
     }
 
     @Override
@@ -98,6 +109,12 @@ public class LocationActivity extends AppCompatActivity {
         if(isLocationActivated) {
             startLocationUpdates();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopLocationUpdates();
     }
 
     private void checkPermissions() {
@@ -202,10 +219,36 @@ public class LocationActivity extends AppCompatActivity {
         });
     }
 
+    private void setLocation(Location location) {
+        currentLocation = location;
+        currentLocationLatitude = location.getLatitude();
+        currentLocationLongitude = location.getLongitude();
+
+        if(mMap != null) {
+            LatLng moveToCurrent = new LatLng(currentLocationLatitude, currentLocationLongitude);
+            mMap.addMarker(new MarkerOptions()
+                    .position(moveToCurrent)
+                    .title("Marker"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(moveToCurrent));
+        }
+    }
+
+    public void onMapReady(GoogleMap map) {
+        mMap = map;
+
+        map.addMarker(new MarkerOptions()
+                .position(new LatLng(0, 0))
+                .title("Marker"));
+    }
+
     private void startLocationUpdates() {
         fusedLocationClient.requestLocationUpdates(locationRequest,
                 locationCallback,
                 Looper.getMainLooper());
+    }
+
+    private void stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(locationCallback);
     }
 
     //Menu click listener
