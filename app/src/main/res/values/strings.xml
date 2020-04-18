@@ -18,4 +18,9 @@
     <string name="createAccount">CREATE ACCOUNT</string>
     <string name="logoutLabel">LOGOUT</string>
 
+    <!--  Dialog Strings  -->
+    <string name="okButton">Ok</string>
+    <string name="noButton">No</string>
+    <string name="yesButton">Yes</string>
+
 </resources>
