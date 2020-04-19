@@ -4,16 +4,110 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#7AC0BB"
     tools:context=".ChildRegisterActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
         <TextView
+            android:id="@+id/registerChild"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="on Child Register Page"/>
+            android:text="@string/titleRegisterChild"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/emailChild"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.684" />
+
+        <EditText
+            android:id="@+id/emailChild"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="132dp"
+            android:autofillHints="@string/enterEmail"
+            android:ems="10"
+            android:hint="@string/enterEmail"
+            android:inputType="textEmailAddress"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.050000012" />
+
+        <EditText
+            android:id="@+id/passwordChild"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autofillHints="@string/enterPassword"
+            android:ems="10"
+            android:hint="@string/enterPassword"
+            android:inputType="textPassword"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/emailChild"
+            app:layout_constraintVertical_bias="0.04000002" />
+
+        <EditText
+            android:id="@+id/confirmPasswordChild"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autofillHints="@string/confirmPassword"
+            android:ems="10"
+            android:hint="@string/confirmPassword"
+            android:inputType="textPassword"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/passwordChild"
+            app:layout_constraintVertical_bias="0.050000012" />
+
+        <EditText
+            android:id="@+id/displayChildName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:hint="@string/displayChildName"
+            android:autofillHints="@string/displayChildName"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/confirmPasswordChild"
+            app:layout_constraintVertical_bias="0.052" />
+
+        <EditText
+            android:id="@+id/generatedCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:hint="@string/generatedCode"
+            android:autofillHints="@string/generatedCode"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/displayChildName"
+            app:layout_constraintVertical_bias="0.057" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="180sp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/login_roundbutton"
+            android:text="@string/registerButtonChild"
+            android:textColor="#ffffff"
+            android:focusable = "true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/generatedCode" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -33,6 +127,7 @@
             app:itemIconTint="@color/white"
             app:itemTextColor="@color/white"
             app:menu="@menu/app_menu" />
+
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,6 +13,7 @@
     <!--  Label Strings  -->
     <string name="enterEmail">Enter Email here...</string>
     <string name="enterPassword">Enter Password here...</string>
+    <string name="confirmPassword">Confirm Password</string>
     <string name="loginLabel">LOGIN</string>
     <string name="signInAccount">SIGN IN</string>
     <string name="createAccount">CREATE ACCOUNT</string>
@@ -26,5 +27,16 @@
     <string name="noButton">No</string>
     <string name="yesButton">Yes</string>
     <string name="title_activity_register_role_selection">RegisterRoleSelectionActivity</string>
+
+    <!--  Parent Register Strings  -->
+    <string name="titleRegisterChild">Child Registration Form</string>
+    <string name="registerButtonChild">Register</string>
+    <string name="displayParentName">Enter a display name</string>
+
+    <!--  Child Register Strings  -->
+    <string name="titleRegisterParent">Parent Registration Form</string>
+    <string name="registerButtonParent">Register</string>
+    <string name="displayChildName">Enter a display name</string>
+    <string name="generatedCode">Enter generated code</string>
 
 </resources>
