@@ -225,6 +225,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         currentLocationLongitude = location.getLongitude();
 
         if(mMap != null) {
+            mMap.clear();
             LatLng moveToCurrent = new LatLng(currentLocationLatitude, currentLocationLongitude);
             mMap.addMarker(new MarkerOptions()
                     .position(moveToCurrent)
@@ -235,10 +236,6 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
     public void onMapReady(GoogleMap map) {
         mMap = map;
-
-        map.addMarker(new MarkerOptions()
-                .position(new LatLng(0, 0))
-                .title("Marker"));
     }
 
     private void startLocationUpdates() {
