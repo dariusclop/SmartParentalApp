@@ -16,11 +16,15 @@
     <string name="loginLabel">LOGIN</string>
     <string name="signInAccount">SIGN IN</string>
     <string name="createAccount">CREATE ACCOUNT</string>
+    <string name="createParentAccount">CREATE PARENT ACCOUNT</string>
+    <string name="createChildAccount">CREATE CHILD ACCOUNT</string>
+    <string name="registerBackButton">BACK</string>
     <string name="logoutLabel">LOGOUT</string>
 
     <!--  Dialog Strings  -->
     <string name="okButton">Ok</string>
     <string name="noButton">No</string>
     <string name="yesButton">Yes</string>
+    <string name="title_activity_register_role_selection">RegisterRoleSelectionActivity</string>
 
 </resources>

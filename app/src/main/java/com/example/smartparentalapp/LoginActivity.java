@@ -43,15 +43,14 @@ public class LoginActivity extends AppCompatActivity {
 
         // Buttons
         Button signInButton = (Button) findViewById(R.id.signInButton);
-        //Button createAccountButton = (Button) findViewById(R.id.createAccountButton);
+        Button createAccountButton = (Button) findViewById(R.id.createAccountButton);
 
         //Menu set click listener
         BottomNavigationView clickedMenuItem = findViewById(R.id.bottom_navigation);
         if(userSignedIn != null) {
             clickedMenuItem.getMenu().removeItem(R.id.loginPage);
         }
-        else
-        {
+        else {
             clickedMenuItem.getMenu().removeItem(R.id.profilePage);
         }
         clickedMenuItem.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
@@ -69,7 +68,14 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-        //createAccountButton.setOnClickListener();
+
+        createAccountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent roleSelectionIntent = new Intent(getApplicationContext(), RegisterRoleSelectionActivity.class);
+                startActivityForResult(roleSelectionIntent, 0);
+            }
+        });
     }
 
     @Override

@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.smartparentalapp">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,7 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ProfileActivity"></activity>
+        <activity android:name=".ChildRegisterActivity"></activity>
+        <activity android:name=".ParentRegisterActivity" />
+        <activity android:name=".RegisterRoleSelectionActivity" />
+        <activity android:name=".ProfileActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".LocationActivity" />
         <activity android:name=".MainActivity">
@@ -18,19 +24,16 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-<!--        <service-->
-<!--            android:name="LocationFetchingService"-->
-<!--            android:foregroundServiceType="location" >-->
-<!--        </service>-->
+        </activity> <!-- <service -->
+        <!-- android:name="LocationFetchingService" -->
+        <!-- android:foregroundServiceType="location" > -->
+        <!-- </service> -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBDjS85St--4atI8uSOvhuJ4GBQDfLU6AY"/>
+            android:value="AIzaSyBDjS85St--4atI8uSOvhuJ4GBQDfLU6AY" />
     </application>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
 </manifest>
