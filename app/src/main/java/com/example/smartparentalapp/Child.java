@@ -5,12 +5,14 @@ public class Child {
     private String email;
     private String displayName;
     private String generatedCode;
+    private boolean isParent;
 
     public Child(String id, String email, String displayName, String generatedCode) {
         this.id = id;
         this.email = email;
         this.displayName = displayName;
         this.generatedCode = generatedCode;
+        this.isParent = false;
     }
 
     //Getters
@@ -28,6 +30,10 @@ public class Child {
 
     public String getGeneratedCode() {
         return this.generatedCode;
+    }
+
+    public boolean isParent() {
+        return this.isParent;
     }
 
     //Setters
