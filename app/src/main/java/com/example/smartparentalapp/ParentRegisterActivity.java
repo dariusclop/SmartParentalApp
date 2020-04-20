@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -20,11 +19,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import org.w3c.dom.Text;
-
 public class ParentRegisterActivity extends AppCompatActivity {
     private FirebaseAuth dbAuth;
     private MenuHelper menuHelper;
+    private ParentHelper parentHelper;
     private EditText mEmailField;
     private EditText mPasswordField;
     private EditText mConfirmPasswordField;
@@ -99,13 +97,24 @@ public class ParentRegisterActivity extends AppCompatActivity {
         });
     }
 
-    public void updateUI(FirebaseUser account){
-        if(account != null){
+    private void updateUI(FirebaseUser account){
+        if(account != null) {
             Toast.makeText(this,"Registration success, you are logged in!",Toast.LENGTH_LONG).show();
             startActivity(new Intent(this,  MainActivity.class));
         }
         else {
             Toast.makeText(this,"Account registration failed",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void createParentUser(FirebaseUser user) {
+        if(user != null) {
+            String currentUserUid = user.getUid();
+            String currentEmail = mEmailField.getText().toString();
+            String currentDisplayName = mDisplayNameField.getText().toString();
+            Parent newParent = new Parent(currentUserUid, currentEmail, currentDisplayName);
+            parentHelper = new ParentHelper(newParent);
+            parentHelper.addUser();
         }
     }
 
@@ -117,6 +126,7 @@ public class ParentRegisterActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = dbAuth.getCurrentUser();
+                            createParentUser(user);
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.

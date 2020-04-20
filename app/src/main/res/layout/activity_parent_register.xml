@@ -86,7 +86,6 @@
             android:layout_width="180sp"
             android:layout_height="wrap_content"
             android:background="@drawable/login_roundbutton"
-            android:focusable="true"
             android:text="@string/registerButtonParent"
             android:textColor="#ffffff"
             app:layout_constraintBottom_toBottomOf="parent"

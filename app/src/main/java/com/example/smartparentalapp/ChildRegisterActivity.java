@@ -28,6 +28,7 @@ public class ChildRegisterActivity extends AppCompatActivity {
     private EditText mDisplayNameField;
     private EditText mGeneratedCodeField;
     private boolean isRegistrationValid;
+    private String currentUserUid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,13 +102,19 @@ public class ChildRegisterActivity extends AppCompatActivity {
         });
     }
 
-    public void updateUI(FirebaseUser account){
+    private void updateUI(FirebaseUser account){
         if(account != null){
             Toast.makeText(this,"Registration success, you are logged in!",Toast.LENGTH_LONG).show();
             startActivity(new Intent(this,  MainActivity.class));
         }
         else {
             Toast.makeText(this,"Account registration failed",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void createChildUser(FirebaseUser user) {
+        if(user != null) {
+            currentUserUid = user.getUid();
         }
     }
 
@@ -119,6 +126,7 @@ public class ChildRegisterActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = dbAuth.getCurrentUser();
+                            createChildUser(user);
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
