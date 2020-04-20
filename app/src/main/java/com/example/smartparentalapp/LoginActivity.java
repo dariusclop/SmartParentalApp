@@ -86,11 +86,12 @@ public class LoginActivity extends AppCompatActivity {
         //updateUI(currentUser);
     }
 
-    public void updateUI(FirebaseUser account){
+    public void updateUI(FirebaseUser account) {
         if(account != null){
             Toast.makeText(this,"Signed in",Toast.LENGTH_LONG).show();
             startActivity(new Intent(this,  MainActivity.class));
-        }else {
+        }
+        else {
             Toast.makeText(this,"Account sign in failed",Toast.LENGTH_LONG).show();
         }
     }
