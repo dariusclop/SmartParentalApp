@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -28,7 +29,6 @@ public class ChildRegisterActivity extends AppCompatActivity {
     private EditText mDisplayNameField;
     private EditText mGeneratedCodeField;
     private boolean isRegistrationValid;
-    private String currentUserUid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,16 +37,10 @@ public class ChildRegisterActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         menuHelper = new MenuHelper();
         dbAuth = FirebaseAuth.getInstance();
-        FirebaseUser userSignedIn = dbAuth.getCurrentUser();
 
         //Menu set click listener
         BottomNavigationView clickedMenuItem = findViewById(R.id.bottom_navigation);
-        if(userSignedIn != null) {
-            clickedMenuItem.getMenu().removeItem(R.id.loginPage);
-        }
-        else {
-            clickedMenuItem.getMenu().removeItem(R.id.profilePage);
-        }
+        clickedMenuItem.getMenu().removeItem(R.id.profilePage);
         clickedMenuItem.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
 
         // Views
@@ -95,6 +89,14 @@ public class ChildRegisterActivity extends AppCompatActivity {
                     isRegistrationValid = false;
                     mConfirmPasswordField.setError("Passwords don't match");
                 }
+                if(mPasswordField.getText().toString().length() < 6) {
+                    isRegistrationValid = false;
+                    mPasswordField.setError("Password needs to be at least 6 characters");
+                }
+//                if(!tokenVerify.isTokenValid(mGeneratedCodeField.getText().toString())) {
+//                    isRegistrationValid = false;
+//                    mGeneratedCodeField.setError("Token is invalid");
+//                }
                 if(isRegistrationValid) {
                     registerUser(mEmailField.getText().toString(), mPasswordField.getText().toString());
                 }
@@ -114,7 +116,13 @@ public class ChildRegisterActivity extends AppCompatActivity {
 
     private void createChildUser(FirebaseUser user) {
         if(user != null) {
-            currentUserUid = user.getUid();
+            String currentUserUid = user.getUid();
+            String currentEmail = mEmailField.getText().toString();
+            String currentDisplayName = mDisplayNameField.getText().toString();
+            String currentGeneratedCode = mGeneratedCodeField.getText().toString();
+            Child newChild = new Child(currentUserUid, currentEmail, currentDisplayName, currentGeneratedCode);
+            ChildHelper childHelper = new ChildHelper(newChild);
+            childHelper.connectToParent();
         }
     }
 
@@ -129,7 +137,8 @@ public class ChildRegisterActivity extends AppCompatActivity {
                             createChildUser(user);
                             updateUI(user);
                         } else {
-                            // If sign in fails, display a message to the user.
+                            // If register fails, display a message to the user.
+                            Log.w("Account registration failed", task.getException().getMessage());
                             updateUI(null);
                         }
                     }

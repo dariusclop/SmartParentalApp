@@ -21,8 +21,8 @@ public class ParentHelper {
     }
 
     public void addUser() {
-        DocumentReference documentReference = fStore.collection("parents").document(currentParent.getParentId());
-        documentReference.set(currentParent).addOnSuccessListener(new OnSuccessListener<Void>() {
+        DocumentReference parentsReference = fStore.collection("parents").document(currentParent.getParentId());
+        parentsReference.set(currentParent).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.v(TAG, "On success, parent user was created at id "+ currentParent.getParentId());

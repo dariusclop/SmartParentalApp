@@ -34,6 +34,10 @@ public class Parent {
         return this.displayName;
     }
 
+    public String getGeneratedCode() {
+        return this.generatedCode;
+    }
+
     public boolean isParent() {
         return this.isParent;
     }

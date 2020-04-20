@@ -36,16 +36,10 @@ public class ParentRegisterActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         menuHelper = new MenuHelper();
         dbAuth = FirebaseAuth.getInstance();
-        FirebaseUser userSignedIn = dbAuth.getCurrentUser();
 
         //Menu set click listener
         BottomNavigationView clickedMenuItem = findViewById(R.id.bottom_navigation);
-        if(userSignedIn != null) {
-            clickedMenuItem.getMenu().removeItem(R.id.loginPage);
-        }
-        else {
-            clickedMenuItem.getMenu().removeItem(R.id.profilePage);
-        }
+        clickedMenuItem.getMenu().removeItem(R.id.profilePage);
         clickedMenuItem.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
 
         // Views
