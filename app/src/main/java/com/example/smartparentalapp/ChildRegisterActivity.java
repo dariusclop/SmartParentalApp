@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,10 +16,17 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.lang.ref.WeakReference;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChildRegisterActivity extends AppCompatActivity {
     private FirebaseAuth dbAuth;
@@ -29,6 +37,8 @@ public class ChildRegisterActivity extends AppCompatActivity {
     private EditText mDisplayNameField;
     private EditText mGeneratedCodeField;
     private boolean isRegistrationValid;
+    private AtomicBoolean isValidToken;
+    ChildHelper tokenValidation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +46,9 @@ public class ChildRegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_child_register);
         getSupportActionBar().hide();
         menuHelper = new MenuHelper();
+        tokenValidation = new ChildHelper(null);
         dbAuth = FirebaseAuth.getInstance();
+        isValidToken = new AtomicBoolean(false);
 
         //Menu set click listener
         BottomNavigationView clickedMenuItem = findViewById(R.id.bottom_navigation);
@@ -93,12 +105,19 @@ public class ChildRegisterActivity extends AppCompatActivity {
                     isRegistrationValid = false;
                     mPasswordField.setError("Password needs to be at least 6 characters");
                 }
-//                if(!tokenVerify.isTokenValid(mGeneratedCodeField.getText().toString())) {
-//                    isRegistrationValid = false;
-//                    mGeneratedCodeField.setError("Token is invalid");
-//                }
                 if(isRegistrationValid) {
-                    registerUser(mEmailField.getText().toString(), mPasswordField.getText().toString());
+                    tokenValidation.isTokenValid(mGeneratedCodeField.getText().toString().trim(), new TokenFinderCallback() {
+                        @Override
+                        public void onCallback() {
+                            if(isValidToken.get()) {
+                                registerUser(mEmailField.getText().toString(), mPasswordField.getText().toString());
+                            }
+                            else {
+                                isRegistrationValid = false;
+                                mGeneratedCodeField.setError("Token is invalid");
+                            }
+                        }
+                    }, isValidToken);
                 }
             }
         });

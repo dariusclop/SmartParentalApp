@@ -17,7 +17,7 @@ public class Parent {
         this.email = email;
         this.displayName = displayName;
         this.childIds = new ArrayList<>();
-        this.generatedCode = "";
+        this.generatedCode = id;
         this.isParent = true;
     }
 
