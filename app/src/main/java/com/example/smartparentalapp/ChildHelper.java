@@ -15,6 +15,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ChildHelper {
 
@@ -25,6 +26,25 @@ public class ChildHelper {
     public ChildHelper(Child currentChild) {
         this.currentChild = currentChild;
         fStore = FirebaseFirestore.getInstance();
+    }
+
+    public void findChildById(final String id, final AtomicReference<Child> child, final ChildFinderCallback childCallback) {
+        fStore.collection("children").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        if(document.getId().equals(id)) {
+                            child.set(document.toObject(Child.class));
+                            break;
+                        }
+                    }
+                    childCallback.onCallback();
+                } else {
+                    Log.d(TAG, "Error finding child by id: ", task.getException());
+                }
+            }
+        });
     }
 
     public void isTokenValid(final String code, final TokenFinderCallback callback, final AtomicBoolean isValid) {
@@ -40,7 +60,7 @@ public class ChildHelper {
                     }
                     callback.onCallback();
                 } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
+                    Log.d(TAG, "Error validating token: ", task.getException());
                 }
             }
         });

@@ -51,13 +51,17 @@ public class Parent {
         this.displayName = displayName;
     }
 
+    public void setGeneratedCode(String generatedCode) {
+        this.generatedCode = generatedCode;
+    }
+
     //Methods
     public void connectToChild(Long childId) {
         this.childIds.add(childId);
     }
 
     public String generateCodeForChild() {
-        this.generatedCode = UUID.randomUUID().toString();
+        setGeneratedCode(UUID.randomUUID().toString());
         return generatedCode;
     }
 }
