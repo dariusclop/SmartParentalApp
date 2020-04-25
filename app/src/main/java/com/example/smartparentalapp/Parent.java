@@ -12,6 +12,8 @@ public class Parent {
     private String generatedCode;
     private boolean isParent;
 
+    public Parent() {}
+
     public Parent(String id, String email, String displayName) {
         this.id = id;
         this.email = email;

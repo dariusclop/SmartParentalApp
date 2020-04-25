@@ -39,4 +39,10 @@
     <string name="displayChildName">Enter a display name</string>
     <string name="generatedCode">Enter generated code</string>
 
+    <!--  Profile Strings  -->
+    <string name="myProfileTitle">My Profile</string>
+    <string name="personalProfileTitle">Personal Profile</string>
+    <string name="generatedCodeButton">GENERATE CODE</string>
+    <string name="generatedCodeHelperText">Use this code to register child account</string>
+
 </resources>

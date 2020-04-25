@@ -7,6 +7,8 @@ public class Child {
     private String generatedCode;
     private boolean isParent;
 
+    public Child() {}
+
     public Child(String id, String email, String displayName, String generatedCode) {
         this.id = id;
         this.email = email;
