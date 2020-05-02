@@ -1,21 +1,14 @@
 package com.example.smartparentalapp;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
-import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.MenuItem;
 import android.location.Location;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -47,7 +40,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback {
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
-    protected static final int PERMISSION_REQUEST_CODE = 0x1111;
     private boolean isLocationActivated = false;
     private FirebaseAuth dbAuth;
     private FusedLocationProviderClient fusedLocationClient;
@@ -145,7 +137,6 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 }
             });
         }
-        checkPermissions();
         createLocationRequest();
     }
 
@@ -161,57 +152,6 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     protected void onDestroy() {
         super.onDestroy();
         stopLocationUpdates();
-    }
-
-    private void checkPermissions() {
-        boolean permissionAccessFineLocationApproved =
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                        == PackageManager.PERMISSION_GRANTED;
-
-        if (permissionAccessFineLocationApproved) {
-            boolean backgroundLocationPermissionApproved =
-                    ActivityCompat.checkSelfPermission(this,
-                            Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED;
-
-            if (backgroundLocationPermissionApproved) {
-                // App can access location both in the foreground and in the background.
-                // Start your service that doesn't have a foreground service type
-                // defined.
-            } else {
-                ActivityCompat.requestPermissions(this, new String[] {
-                                Manifest.permission.ACCESS_BACKGROUND_LOCATION},
-                        PERMISSION_REQUEST_CODE);
-            }
-        } else {
-            // App doesn't have access to the device's location at all. Make full request
-            // for permission.
-            ActivityCompat.requestPermissions(this, new String[] {
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                    },
-                    PERMISSION_REQUEST_CODE);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(Build.VERSION.SDK_INT >= 29 && ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            new AlertDialog.Builder(this)
-                    .setTitle("No background location provided")
-                    .setMessage("The application must have all-the-time access to location in order to function properly. Do you want to enable them?")
-                    .setNegativeButton(R.string.noButton, null)
-                    .setPositiveButton(R.string.yesButton, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialoginterface, int i) {
-                            checkPermissions();
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-        }
     }
 
     private void getLastLocation() {

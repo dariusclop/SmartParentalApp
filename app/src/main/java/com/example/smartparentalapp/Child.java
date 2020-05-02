@@ -6,15 +6,19 @@ public class Child {
     private String displayName;
     private String generatedCode;
     private boolean isParent;
+    private double latitude;
+    private double longitude;
 
     public Child() {}
 
-    public Child(String id, String email, String displayName, String generatedCode) {
+    public Child(String id, String email, String displayName, String generatedCode, double latitude, double longitude) {
         this.id = id;
         this.email = email;
         this.displayName = displayName;
         this.generatedCode = generatedCode;
         this.isParent = false;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     //Getters
