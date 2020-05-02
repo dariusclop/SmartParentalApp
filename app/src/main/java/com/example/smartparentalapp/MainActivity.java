@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         final FirebaseUser currentUser = dbAuth.getCurrentUser();
+        checkPermissions();
         if(currentUser != null) {
             fStore.collection("parents").document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
@@ -83,10 +84,10 @@ public class MainActivity extends AppCompatActivity {
                                 if(currentChildReference.get() != null) {
                                     currentChild = currentChildReference.get();
                                     currentParent = null;
+                                    getApplicationContext().startService(new Intent(getApplicationContext(), LocationFetchingService.class));
                                 }
                             }
                         });
-                        checkPermissions();
                     }
                 }
             });

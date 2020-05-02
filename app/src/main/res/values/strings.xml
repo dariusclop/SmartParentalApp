@@ -45,4 +45,7 @@
     <string name="generatedCodeButton">GENERATE CODE</string>
     <string name="generatedCodeHelperText">Use this code to register child account</string>
 
+    <!--  Service Strings  -->
+    <string name="locationServiceName">Location is fetched in the background</string>
+
 </resources>
