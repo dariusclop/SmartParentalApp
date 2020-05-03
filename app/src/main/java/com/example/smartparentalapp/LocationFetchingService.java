@@ -21,6 +21,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -64,16 +65,22 @@ public class LocationFetchingService extends Service {
                     return;
                 }
                 for (Location location : locationResult.getLocations()) {
-                    Log.d(TAG, "Locations was changed");
-                    if(currentLocation != null && (currentLocation.getLatitude() != location.getLatitude() || currentLocation.getLongitude() != location.getLongitude())) {
+                    if(currentLocation == null) {
                         setLocation(location);
+                        Log.d(TAG, "First location was changed");
+                    }
+                    else {
+                        if (currentLocation.getLatitude() != location.getLatitude() || currentLocation.getLongitude() != location.getLongitude()) {
+                            setLocation(location);
+                            Log.d(TAG, "Location was changed");
+                        }
                     }
                 }
             }
         };
 
         createLocationRequest();
-        //getLastLocation();
+        getLastLocation();
         HandlerThread handlerThread = new HandlerThread("LocationFetchingService");
         handlerThread.start();
         serviceHandler = new Handler(handlerThread.getLooper());
@@ -128,15 +135,20 @@ public class LocationFetchingService extends Service {
         stopSelf();
     }
 
-//    private void getLastLocation() {
-//        fusedLocationClient.getLastLocation()
-//                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-//                    @Override
-//                    public void onSuccess(Location location) {
-//                        if (location != null) currentLocation = location;
-//                    }
-//                });
-//    }
+    private void getLastLocation() {
+        try {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) currentLocation = location;
+                        }
+                    });
+        }
+        catch(SecurityException e) {
+            Log.e(TAG, "Lost location permission.");
+        }
+    }
 
     protected void createLocationRequest() {
         locationRequest.setInterval(3000);
