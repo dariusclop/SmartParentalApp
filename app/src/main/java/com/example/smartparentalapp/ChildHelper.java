@@ -102,8 +102,8 @@ public class ChildHelper {
         });
 
         //Child create account
-        DocumentReference childrenReference = fStore.collection("children").document(currentChild.getChildId());
-        childrenReference.set(currentChild).addOnSuccessListener(new OnSuccessListener<Void>() {
+        DocumentReference childReference = fStore.collection("children").document(currentChild.getChildId());
+        childReference.set(currentChild).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.v(TAG, "On success, child user was created at id "+ currentChild.getChildId());
@@ -112,6 +112,30 @@ public class ChildHelper {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.v(TAG, "On failure, error at creating parent user -> " + e.toString());
+            }
+        });
+
+        childReference.update("latitude", 0).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.v(TAG, "On success, child location latitude was updated");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.v(TAG, "On failure, error updating child latitude data -> " + e.toString());
+            }
+        });
+
+        childReference.update("longitude", 0).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.v(TAG, "On success, child location longitude was updated");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.v(TAG, "On failure, error updating child longitude data -> " + e.toString());
             }
         });
     }
