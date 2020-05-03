@@ -40,15 +40,12 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback {
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
-    private boolean isLocationActivated = false;
     private FirebaseAuth dbAuth;
     private FusedLocationProviderClient fusedLocationClient;
     private Location currentLocation;
     private double currentLocationLatitude;
     private double currentLocationLongitude;
     private MenuHelper menuHelper;
-    private LocationRequest locationRequest;
-    private LocationCallback locationCallback;
     private GoogleMap mMap;
     private SupportMapFragment mapFragment;
     private Parent currentParent;
@@ -65,23 +62,6 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         dbAuth = FirebaseAuth.getInstance();
         FirebaseUser userSignedIn = dbAuth.getCurrentUser();
         fStore = FirebaseFirestore.getInstance();
-
-        //Location
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        locationRequest = LocationRequest.create();
-
-        //Location Callback function
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
-                    return;
-                }
-                for (Location location : locationResult.getLocations()) {
-                    setLocation(location);
-                }
-            }
-        };
 
         //Menu set click listener
         BottomNavigationView clickedMenuItem = findViewById(R.id.bottom_navigation);
@@ -137,72 +117,6 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 }
             });
         }
-        createLocationRequest();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(isLocationActivated) {
-            startLocationUpdates();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        stopLocationUpdates();
-    }
-
-    private void getLastLocation() {
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if (location != null) {
-                            currentLocation = location;
-                        }
-                    }
-                });
-    }
-
-    protected void createLocationRequest() {
-        locationRequest.setInterval(5000);
-        locationRequest.setFastestInterval(3000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(locationRequest);
-
-        SettingsClient client = LocationServices.getSettingsClient(this);
-        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
-
-        task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
-            @Override
-            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                if(currentLocation == null) {
-                    //get a starting point for the location
-                    getLastLocation();
-                }
-                isLocationActivated = true;
-            }
-        });
-
-        task.addOnFailureListener(this, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                if (e instanceof ResolvableApiException) {
-                    Toast.makeText(getApplicationContext(), "Location fetching failed. Make sure to have location activated", Toast.LENGTH_LONG).show();
-                    isLocationActivated = false;
-                    try {
-                        ResolvableApiException resolvable = (ResolvableApiException) e;
-                        resolvable.startResolutionForResult(LocationActivity.this,
-                                REQUEST_CHECK_SETTINGS);
-                    } catch (IntentSender.SendIntentException sendEx) {
-                        sendEx.printStackTrace();
-                    }
-                }
-            }
-        });
     }
 
     private void setLocation(Location location) {
@@ -222,16 +136,6 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
     public void onMapReady(GoogleMap map) {
         mMap = map;
-    }
-
-    private void startLocationUpdates() {
-        fusedLocationClient.requestLocationUpdates(locationRequest,
-                locationCallback,
-                Looper.getMainLooper());
-    }
-
-    private void stopLocationUpdates() {
-        fusedLocationClient.removeLocationUpdates(locationCallback);
     }
 
     //Menu click listener
