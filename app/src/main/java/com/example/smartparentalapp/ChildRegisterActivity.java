@@ -132,7 +132,7 @@ public class ChildRegisterActivity extends AppCompatActivity {
             String currentEmail = mEmailField.getText().toString();
             String currentDisplayName = mDisplayNameField.getText().toString();
             String currentGeneratedCode = mGeneratedCodeField.getText().toString();
-            Child newChild = new Child(currentUserUid, currentEmail, currentDisplayName, currentGeneratedCode, 0 , 0);
+            Child newChild = new Child(currentUserUid, currentEmail, currentDisplayName, currentGeneratedCode);
             ChildHelper childHelper = new ChildHelper(newChild);
             childHelper.connectToParent();
         }

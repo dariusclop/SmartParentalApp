@@ -1,5 +1,6 @@
 package com.example.smartparentalapp;
 
+import android.location.Location;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -105,12 +106,42 @@ public class ChildHelper {
         childrenReference.set(currentChild).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Log.v(TAG, "On success, parent user was created at id "+ currentChild.getChildId());
+                Log.v(TAG, "On success, child user was created at id "+ currentChild.getChildId());
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.v(TAG, "On failure, error at creating parent user -> " + e.toString());
+            }
+        });
+    }
+
+    public void updateLocationData(String childId, Location location) {
+        DocumentReference childReference = fStore.collection("children").document(childId);
+
+        //Update latitude
+        childReference.update("latitude", location.getLatitude()).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.v(TAG, "On success, child location latitude was updated");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.v(TAG, "On failure, error updating child latitude data -> " + e.toString());
+            }
+        });
+
+        //Update longitude
+        childReference.update("longitude", location.getLongitude()).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.v(TAG, "On success, child location longitude was updated");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.v(TAG, "On failure, error updating child longitude data -> " + e.toString());
             }
         });
     }
