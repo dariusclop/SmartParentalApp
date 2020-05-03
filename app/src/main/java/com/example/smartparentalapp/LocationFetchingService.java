@@ -1,5 +1,6 @@
 package com.example.smartparentalapp;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
@@ -11,24 +12,21 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.concurrent.Executor;
-
 public class LocationFetchingService extends Service {
+    private final static String TAG = "LocationFetchingService";
     private boolean isLocationActivated = false;
     private FirebaseAuth dbAuth;
     private FusedLocationProviderClient fusedLocationClient;
@@ -57,11 +55,16 @@ public class LocationFetchingService extends Service {
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
+                FirebaseUser currentUser = dbAuth.getCurrentUser();
                 if (locationResult == null) {
                     return;
                 }
+                if (currentUser == null) {
+                    stopLocationUpdates();
+                    return;
+                }
                 for (Location location : locationResult.getLocations()) {
-                    Log.d("123", "Locations was changed");
+                    Log.d(TAG, "Locations was changed");
                     if(currentLocation != null && (currentLocation.getLatitude() != location.getLatitude() || currentLocation.getLongitude() != location.getLongitude())) {
                         setLocation(location);
                     }
@@ -75,11 +78,31 @@ public class LocationFetchingService extends Service {
         handlerThread.start();
         serviceHandler = new Handler(handlerThread.getLooper());
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        String channelId = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? createNotificationChannel(notificationManager) : "";
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel("1111", getString(R.string.locationServiceName), NotificationManager.IMPORTANCE_DEFAULT);
-            notificationManager.createNotificationChannel(notificationChannel);
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId);
+            Notification notification = notificationBuilder.setOngoing(true)
+                    .setSmallIcon(R.drawable.ic_location)
+                    .setContentTitle(getString(R.string.locationServiceTitle))
+                    .setContentText(getString(R.string.locationServiceName))
+                    .setPriority(1)
+                    .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                    .build();
+
+            startForeground(1337 , notification);
         }
+    }
+
+    private String createNotificationChannel(NotificationManager notificationManager) {
+        String channelId = "my_service_channelid";
+        String channelName = "My Foreground Service";
+        NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+        // omitted the LED color
+        channel.setImportance(NotificationManager.IMPORTANCE_NONE);
+        channel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+        notificationManager.createNotificationChannel(channel);
+        return channelId;
     }
 
     @Override
@@ -90,8 +113,9 @@ public class LocationFetchingService extends Service {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
+        Log.d(TAG, "Location fetching service was destroyed");
         stopLocationUpdates();
+        super.onDestroy();
     }
 
     public void requestLocationUpdates() {
@@ -115,8 +139,8 @@ public class LocationFetchingService extends Service {
 //    }
 
     protected void createLocationRequest() {
-        locationRequest.setInterval(60000);
-        locationRequest.setFastestInterval(30000);
+        locationRequest.setInterval(3000);
+        locationRequest.setFastestInterval(1000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 

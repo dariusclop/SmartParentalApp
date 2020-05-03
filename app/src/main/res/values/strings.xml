@@ -46,6 +46,7 @@
     <string name="generatedCodeHelperText">Use this code to register child account</string>
 
     <!--  Service Strings  -->
+    <string name="locationServiceTitle">Location Service</string>
     <string name="locationServiceName">Location is fetched in the background</string>
 
 </resources>

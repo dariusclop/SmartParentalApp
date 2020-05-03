@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private Child currentChild;
     private FirebaseFirestore fStore;
     protected static final int PERMISSION_REQUEST_CODE = 0x1111;
+    private Intent service;
+    private boolean serviceStarted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
         fStore = FirebaseFirestore.getInstance();
+        serviceStarted = false;
 
         //Menu set click listener
         BottomNavigationView clickedMenuItem = findViewById(R.id.bottom_navigation);
@@ -84,7 +87,13 @@ public class MainActivity extends AppCompatActivity {
                                 if(currentChildReference.get() != null) {
                                     currentChild = currentChildReference.get();
                                     currentParent = null;
-                                    getApplicationContext().startService(new Intent(getApplicationContext(), LocationFetchingService.class));
+                                    service = new Intent(getApplicationContext(), LocationFetchingService.class);
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                        startForegroundService(service);
+                                    } else {
+                                        startService(service);
+                                    }
+                                    serviceStarted = true;
                                 }
                             }
                         });
@@ -143,6 +152,25 @@ public class MainActivity extends AppCompatActivity {
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        FirebaseUser userSignedIn = dbAuth.getCurrentUser();
+        if(userSignedIn == null && serviceStarted) {
+            stopService(service);
+            serviceStarted = false;
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if(serviceStarted) {
+            stopService(service);
+            serviceStarted = false;
+        }
+        super.onDestroy();
     }
 
     //Menu click listener
