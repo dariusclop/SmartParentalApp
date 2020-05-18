@@ -28,18 +28,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LocationFetchingService extends Service {
     private final static String TAG = "LocationFetchingService";
-    private boolean isLocationActivated = false;
     private FirebaseAuth dbAuth;
     private FusedLocationProviderClient fusedLocationClient;
     private Location currentLocation;
-    private double currentLocationLatitude;
-    private double currentLocationLongitude;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
-    private Child currentChild;
     private FirebaseFirestore fStore;
     private NotificationManager notificationManager;
     private Handler serviceHandler;
+    private FirebaseUser currentUser;
+    private ChildHelper childHelper;
 
     public LocationFetchingService() {}
 
@@ -86,6 +84,8 @@ public class LocationFetchingService extends Service {
         serviceHandler = new Handler(handlerThread.getLooper());
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         String channelId = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? createNotificationChannel(notificationManager) : "";
+        currentUser = dbAuth.getCurrentUser();
+        childHelper = new ChildHelper(null);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId);
@@ -151,17 +151,16 @@ public class LocationFetchingService extends Service {
     }
 
     protected void createLocationRequest() {
-        locationRequest.setInterval(3000);
-        locationRequest.setFastestInterval(1000);
+        locationRequest.setInterval(30000);
+        locationRequest.setFastestInterval(20000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
     private void setLocation(Location location) {
         currentLocation = location;
-        currentLocationLatitude = location.getLatitude();
-        currentLocationLongitude = location.getLongitude();
-
-        //do here firebase store location
+        if(currentUser != null) {
+            childHelper.updateLocationData(currentUser.getUid(), currentLocation);
+        }
     }
 
     @Nullable
