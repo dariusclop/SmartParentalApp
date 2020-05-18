@@ -93,8 +93,6 @@ public class ProfileActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if(task.getResult().exists()) {
                         generateCodeButton.setVisibility(View.VISIBLE);
-                        generatedCodeText.setVisibility(View.VISIBLE);
-                        generatedCodeHelper.setVisibility(View.VISIBLE);
                         ParentHelper parentHelper = new ParentHelper(null);
                         final String userUid = currentUser.getUid();
                         final AtomicReference<Parent> currentParentReference = new AtomicReference<>(null);
@@ -135,6 +133,8 @@ public class ProfileActivity extends AppCompatActivity {
     private void generateCode() {
         if(currentParent != null) {
             ParentHelper parentHelper = new ParentHelper(currentParent);
+            generatedCodeText.setVisibility(View.VISIBLE);
+            generatedCodeHelper.setVisibility(View.VISIBLE);
             String displayKey = parentHelper.generateKey();
             generatedCodeText.setText(displayKey);
         }
