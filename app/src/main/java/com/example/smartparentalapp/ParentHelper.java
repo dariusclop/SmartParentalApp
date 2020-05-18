@@ -9,12 +9,10 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ParentHelper {
@@ -34,7 +32,7 @@ public class ParentHelper {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        if(document.getId().equals(id)) {
+                        if (document.getId().equals(id)) {
                             parent.set(document.toObject(Parent.class));
                             break;
                         }
@@ -52,7 +50,7 @@ public class ParentHelper {
         parentsReference.set(currentParent).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Log.v(TAG, "On success, parent user was created at id "+ currentParent.getParentId());
+                Log.v(TAG, "On success, parent user was created at id " + currentParent.getParentId());
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -77,24 +75,5 @@ public class ParentHelper {
             }
         });
         return generatedKey;
-    }
-
-    public void getAllChildren(final List<Child> children) {
-        fStore.collection("children").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    if(task.getResult().size() > 0) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            if (document.exists()) {
-                                children.add(document.toObject(Child.class));
-                            }
-                        }
-                    }
-                } else {
-                    Log.d(TAG, "Error fetching children: ", task.getException());
-                }
-            }
-        });
     }
 }

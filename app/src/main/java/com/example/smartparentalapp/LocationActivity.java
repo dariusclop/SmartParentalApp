@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.location.Location;
 
@@ -21,7 +22,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -35,6 +40,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     private Parent currentParent;
     private Child currentChild;
     private FirebaseFirestore fStore;
+    private List<Child> childList;
+    private final static String TAG = "LocationActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +78,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if(task.getResult().exists()) {
-                        ParentHelper parentHelper = new ParentHelper(null);
+                        final ParentHelper parentHelper = new ParentHelper(null);
                         final String userUid = currentUser.getUid();
                         final AtomicReference<Parent> currentParentReference = new AtomicReference<>(null);
                         parentHelper.findParentById(userUid, currentParentReference, new ParentFinderCallback() {
@@ -80,6 +87,25 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                                 if(currentParentReference.get() != null) {
                                     currentParent = currentParentReference.get();
                                     currentChild = null;
+                                    childList = new ArrayList<>();
+                                    fStore.collection("children").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                if(task.getResult().size() > 0) {
+                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                        if (document.exists()) {
+                                                            childList.add(document.toObject(Child.class));
+                                                        }
+                                                    }
+                                                    //filter for parent children
+                                                    //display names in spinner
+                                                }
+                                            } else {
+                                                Log.d(TAG, "Error fetching children: ", task.getException());
+                                            }
+                                        }
+                                    });
                                 }
                             }
                         });
@@ -100,6 +126,15 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                     }
                 }
             });
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FirebaseUser currentUser = dbAuth.getCurrentUser();
+        if(currentUser == null) {
+            childList.clear();
         }
     }
 
