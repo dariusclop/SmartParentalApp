@@ -4,22 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.IntentSender;
 import android.os.Bundle;
-import android.os.Looper;
 import android.view.MenuItem;
 import android.location.Location;
-import android.widget.Toast;
 
-import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -27,8 +15,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,9 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback {
-    protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     private FirebaseAuth dbAuth;
-    private FusedLocationProviderClient fusedLocationClient;
     private Location currentLocation;
     private double currentLocationLatitude;
     private double currentLocationLongitude;

@@ -24,7 +24,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LocationFetchingService extends Service {
     private final static String TAG = "LocationFetchingService";
@@ -33,7 +32,6 @@ public class LocationFetchingService extends Service {
     private Location currentLocation;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
-    private FirebaseFirestore fStore;
     private NotificationManager notificationManager;
     private Handler serviceHandler;
     private FirebaseUser currentUser;
@@ -44,7 +42,6 @@ public class LocationFetchingService extends Service {
     @Override
     public void onCreate() {
         dbAuth = FirebaseAuth.getInstance();
-        fStore = FirebaseFirestore.getInstance();
 
         //Location
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);

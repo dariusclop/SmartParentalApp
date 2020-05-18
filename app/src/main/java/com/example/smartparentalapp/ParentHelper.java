@@ -14,6 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ParentHelper {
@@ -76,5 +77,24 @@ public class ParentHelper {
             }
         });
         return generatedKey;
+    }
+
+    public void getAllChildren(final List<Child> children) {
+        fStore.collection("children").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    if(task.getResult().size() > 0) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            if (document.exists()) {
+                                children.add(document.toObject(Child.class));
+                            }
+                        }
+                    }
+                } else {
+                    Log.d(TAG, "Error fetching children: ", task.getException());
+                }
+            }
+        });
     }
 }
