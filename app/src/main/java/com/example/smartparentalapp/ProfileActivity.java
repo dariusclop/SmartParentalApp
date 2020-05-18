@@ -75,6 +75,12 @@ public class ProfileActivity extends AppCompatActivity {
                signOut();
             }
         });
+        generateCodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                generateCode();
+            }
+        });
     }
 
     @Override
@@ -123,6 +129,14 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 }
             });
+        }
+    }
+
+    private void generateCode() {
+        if(currentParent != null) {
+            ParentHelper parentHelper = new ParentHelper(currentParent);
+            String displayKey = parentHelper.generateKey();
+            generatedCodeText.setText(displayKey);
         }
     }
 

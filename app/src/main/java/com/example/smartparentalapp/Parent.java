@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class Parent {
-    private String id;
+    private String parentId;
     private String email;
     private String displayName;
     private List <Long> childIds;
@@ -14,18 +14,18 @@ public class Parent {
 
     public Parent() {}
 
-    public Parent(String id, String email, String displayName) {
-        this.id = id;
+    public Parent(String parentId, String email, String displayName) {
+        this.parentId = parentId;
         this.email = email;
         this.displayName = displayName;
         this.childIds = new ArrayList<>();
-        this.generatedCode = id;
+        this.generatedCode = parentId;
         this.isParent = true;
     }
 
     //Getters
     public String getParentId() {
-        return this.id;
+        return this.parentId;
     }
 
     public String getEmail() {

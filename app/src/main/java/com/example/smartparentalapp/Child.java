@@ -1,7 +1,7 @@
 package com.example.smartparentalapp;
 
 public class Child {
-    private String id;
+    private String childId;
     private String email;
     private String displayName;
     private String generatedCode;
@@ -11,8 +11,8 @@ public class Child {
 
     public Child() {}
 
-    public Child(String id, String email, String displayName, String generatedCode) {
-        this.id = id;
+    public Child(String childId, String email, String displayName, String generatedCode) {
+        this.childId = childId;
         this.email = email;
         this.displayName = displayName;
         this.generatedCode = generatedCode;
@@ -23,7 +23,7 @@ public class Child {
 
     //Getters
     public String getChildId() {
-        return this.id;
+        return this.childId;
     }
 
     public String getEmail() {

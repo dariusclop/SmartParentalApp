@@ -60,4 +60,21 @@ public class ParentHelper {
             }
         });
     }
+
+    public String generateKey() {
+        String generatedKey = currentParent.generateCodeForChild();
+        DocumentReference parentsReference = fStore.collection("parents").document(currentParent.getParentId());
+        parentsReference.update("generatedCode", generatedKey).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.v(TAG, "On success, new generated key was created");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.v(TAG, "On failure, couldn't generate key -> " + e.toString());
+            }
+        });
+        return generatedKey;
+    }
 }
