@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.location.Location;
+import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -43,6 +45,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     private FirebaseFirestore fStore;
     private List<Child> childList;
     private List<Child> currentChildList;
+    private List<String> currentChildDisplayNames;
     private Spinner childSpinner;
     private final static String TAG = "LocationActivity";
 
@@ -59,10 +62,12 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
         //Spinner
         childSpinner = findViewById(R.id.childrenDropdown);
+        childSpinner.setVisibility(View.GONE);
 
         //Lists
         childList = new ArrayList<>();
         currentChildList = new ArrayList<>();
+        currentChildDisplayNames = new ArrayList<>();
 
         //Menu set click listener
         BottomNavigationView clickedMenuItem = findViewById(R.id.bottom_navigation);
@@ -88,6 +93,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if(task.getResult().exists()) {
+                        childSpinner.setVisibility(View.VISIBLE);
                         final ParentHelper parentHelper = new ParentHelper(null);
                         final String userUid = currentUser.getUid();
                         final AtomicReference<Parent> currentParentReference = new AtomicReference<>(null);
@@ -108,7 +114,9 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                                                         }
                                                     }
                                                     getAssociatedChildren();
-                                                    //display names in spinner
+                                                    ArrayAdapter<String> childListAdapter = new ArrayAdapter<>(LocationActivity.this, android.R.layout.simple_spinner_item, currentChildDisplayNames);
+                                                    childListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                                    childSpinner.setAdapter(childListAdapter);
                                                 }
                                             } else {
                                                 Log.d(TAG, "Error fetching children: ", task.getException());
@@ -120,6 +128,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                         });
                     }
                     else {
+                        childSpinner.setVisibility(View.GONE);
                         ChildHelper childHelper = new ChildHelper(null);
                         final String userUid = currentUser.getUid();
                         final AtomicReference<Child> currentChildReference = new AtomicReference<>();
@@ -144,6 +153,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
             for(Child child : childList) {
                 if(childIds.equals(child.getChildId())) {
                     currentChildList.add(child);
+                    currentChildDisplayNames.add(child.getDisplayName());
                 }
             }
         }
