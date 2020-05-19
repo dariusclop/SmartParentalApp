@@ -42,6 +42,10 @@ public class Child {
         return this.isParent;
     }
 
+    public double getLatitude() { return this.latitude; }
+
+    public double getLongitude() { return this.longitude; }
+
     //Setters
     public void setEmail(String email) {
         this.email = email;

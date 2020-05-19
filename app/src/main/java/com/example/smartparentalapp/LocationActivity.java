@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.location.Location;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
@@ -47,6 +48,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     private List<Child> currentChildList;
     private List<String> currentChildDisplayNames;
     private Spinner childSpinner;
+    private String currentSelected;
     private final static String TAG = "LocationActivity";
 
     @Override
@@ -78,6 +80,27 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
             clickedMenuItem.getMenu().removeItem(R.id.profilePage);
         }
         clickedMenuItem.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
+
+        //Spinner click listener
+        childSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent,
+                                       View view, int pos, long id) {
+                currentSelected = parent.getItemAtPosition(pos).toString();
+                if(childList != null && childList.size() > 0) {
+                    for(Child child : childList) {
+                        if(currentSelected.equals(child.getDisplayName())) {
+                            setLocation(child.getLatitude(), child.getLongitude());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         //Add maps fragment
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -138,6 +161,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                                 if(currentChildReference.get() != null) {
                                     currentChild = currentChildReference.get();
                                     currentParent = null;
+                                    setLocation(currentChild.getLatitude(), currentChild.getLongitude());
                                 }
                             }
                         });
@@ -169,10 +193,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    private void setLocation(Location location) {
-        currentLocation = location;
-        currentLocationLatitude = location.getLatitude();
-        currentLocationLongitude = location.getLongitude();
+    private void setLocation(double currentLocationLatitude, double currentLocationLongitude) {
 
         if(mMap != null) {
             mMap.clear();
