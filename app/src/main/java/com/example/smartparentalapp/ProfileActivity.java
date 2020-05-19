@@ -113,7 +113,7 @@ public class ProfileActivity extends AppCompatActivity {
                         generatedCodeHelper.setVisibility(View.GONE);
                         ChildHelper childHelper = new ChildHelper(null);
                         final String userUid = currentUser.getUid();
-                        final AtomicReference<Child> currentChildReference = new AtomicReference<>();
+                        final AtomicReference<Child> currentChildReference = new AtomicReference<>(null);
                         childHelper.findChildById(userUid, currentChildReference, new ChildFinderCallback() {
                             @Override
                             public void onCallback() {

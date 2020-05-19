@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.location.Location;
+import android.widget.Spinner;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -41,6 +42,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     private Child currentChild;
     private FirebaseFirestore fStore;
     private List<Child> childList;
+    private List<Child> currentChildList;
+    private Spinner childSpinner;
     private final static String TAG = "LocationActivity";
 
     @Override
@@ -53,6 +56,13 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         dbAuth = FirebaseAuth.getInstance();
         FirebaseUser userSignedIn = dbAuth.getCurrentUser();
         fStore = FirebaseFirestore.getInstance();
+
+        //Spinner
+        childSpinner = findViewById(R.id.childrenDropdown);
+
+        //Lists
+        childList = new ArrayList<>();
+        currentChildList = new ArrayList<>();
 
         //Menu set click listener
         BottomNavigationView clickedMenuItem = findViewById(R.id.bottom_navigation);
@@ -87,7 +97,6 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                                 if(currentParentReference.get() != null) {
                                     currentParent = currentParentReference.get();
                                     currentChild = null;
-                                    childList = new ArrayList<>();
                                     fStore.collection("children").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                         @Override
                                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -98,7 +107,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                                                             childList.add(document.toObject(Child.class));
                                                         }
                                                     }
-                                                    //filter for parent children
+                                                    getAssociatedChildren();
                                                     //display names in spinner
                                                 }
                                             } else {
@@ -129,12 +138,24 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
+    private void getAssociatedChildren() {
+        List<String> currentParentChildIds = currentParent.getChildIds();
+        for(String childIds : currentParentChildIds) {
+            for(Child child : childList) {
+                if(childIds.equals(child.getChildId())) {
+                    currentChildList.add(child);
+                }
+            }
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         FirebaseUser currentUser = dbAuth.getCurrentUser();
         if(currentUser == null) {
             childList.clear();
+            currentChildList.clear();
         }
     }
 

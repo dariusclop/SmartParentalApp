@@ -8,7 +8,7 @@ public class Parent {
     private String parentId;
     private String email;
     private String displayName;
-    private List <Long> childIds;
+    private List<String> childIds;
     private String generatedCode;
     private boolean isParent;
 
@@ -44,6 +44,8 @@ public class Parent {
         return this.isParent;
     }
 
+    public List<String> getChildIds() { return this.childIds; }
+
     //Setters
     public void setEmail(String email) {
         this.email = email;
@@ -58,7 +60,7 @@ public class Parent {
     }
 
     //Methods
-    public void connectToChild(Long childId) {
+    public void connectToChild(String childId) {
         this.childIds.add(childId);
     }
 
