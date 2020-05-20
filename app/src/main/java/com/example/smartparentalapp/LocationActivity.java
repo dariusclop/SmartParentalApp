@@ -260,6 +260,12 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        clearLists();
+    }
+
     private void clearLists() {
         while(childList.size() != 0) {
             childList.remove(childList.size() - 1);
