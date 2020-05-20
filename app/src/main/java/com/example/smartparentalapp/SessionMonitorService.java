@@ -1,5 +1,6 @@
 package com.example.smartparentalapp;
 
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -14,10 +15,13 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import java.util.Timer;
+
 public class SessionMonitorService extends Service {
     private final static String TAG = "SessionMonitorService";
     private Handler serviceHandler;
     private NotificationManager notificationManager;
+    public static int SERVICE_FETCH_DATA_RATE = 5000;
 
     public SessionMonitorService() {}
 
@@ -32,14 +36,14 @@ public class SessionMonitorService extends Service {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId);
             Notification notification = notificationBuilder.setOngoing(true)
-                    .setSmallIcon(R.drawable.ic_location)
+                    .setSmallIcon(R.drawable.ic_supervisor)
                     .setContentTitle(getString(R.string.sessionMonitorServiceTitle))
                     .setContentText(getString(R.string.sessionMonitorServiceName))
                     .setPriority(1)
                     .setCategory(NotificationCompat.CATEGORY_SERVICE)
                     .build();
 
-            startForeground(1337 , notification);
+            startForeground(1021 , notification);
         }
     }
 
@@ -53,16 +57,21 @@ public class SessionMonitorService extends Service {
         return channelId;
     }
 
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "Session Monitor Service started");
-        return super.onStartCommand(intent, flags, startId);
+//        if(timer == null)
+//        {
+//            timer = new Timer();
+//            timer.schedule(new MonitoringTimerTask(), 500, SERVICE_FETCH_DATA_RATE);
+//        }
+        return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         Log.d(TAG, "Session Monitor Service was destroyed");
+        serviceHandler.removeCallbacks(null);
         super.onDestroy();
     }
 
