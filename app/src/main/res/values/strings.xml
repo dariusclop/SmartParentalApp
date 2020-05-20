@@ -49,5 +49,7 @@
     <!--  Service Strings  -->
     <string name="locationServiceTitle">Location Service</string>
     <string name="locationServiceName">Location is fetched in the background</string>
+    <string name="sessionMonitorServiceTitle">Session Monitor Service</string>
+    <string name="sessionMonitorServiceName">Child Monitor is fetching data</string>
 
 </resources>
