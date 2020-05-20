@@ -1,16 +1,17 @@
 package com.example.smartparentalapp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.location.Location;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,15 +30,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class LocationActivity extends AppCompatActivity implements OnMapReadyCallback {
     private FirebaseAuth dbAuth;
-    private Location currentLocation;
-    private double currentLocationLatitude;
-    private double currentLocationLongitude;
     private MenuHelper menuHelper;
     private GoogleMap mMap;
     private SupportMapFragment mapFragment;
@@ -48,6 +48,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     private List<Child> currentChildList;
     private List<String> currentChildDisplayNames;
     private Spinner childSpinner;
+    private Button refreshButton;
+    private Button refreshChildButton;
     private String currentSelected;
     private final static String TAG = "LocationActivity";
 
@@ -59,8 +61,14 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
         menuHelper = new MenuHelper();
         dbAuth = FirebaseAuth.getInstance();
-        FirebaseUser userSignedIn = dbAuth.getCurrentUser();
+        final FirebaseUser userSignedIn = dbAuth.getCurrentUser();
         fStore = FirebaseFirestore.getInstance();
+
+        //Buttons
+        refreshButton = findViewById(R.id.refreshButton);
+        refreshChildButton  = findViewById(R.id.refreshChildButton);
+        refreshButton.setVisibility(View.GONE);
+        refreshChildButton.setVisibility(View.GONE);
 
         //Spinner
         childSpinner = findViewById(R.id.childrenDropdown);
@@ -87,8 +95,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
             public void onItemSelected(AdapterView<?> parent,
                                        View view, int pos, long id) {
                 currentSelected = parent.getItemAtPosition(pos).toString();
-                if(childList != null && childList.size() > 0) {
-                    for(Child child : childList) {
+                if(currentChildList != null && currentChildList.size() > 0) {
+                    for(Child child : currentChildList) {
                         if(currentSelected.equals(child.getDisplayName())) {
                             setLocation(child.getLatitude(), child.getLongitude());
                         }
@@ -99,6 +107,62 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
+            }
+        });
+
+        //Button click listener
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                 fStore.collection("children").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                     @Override
+                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                         if (task.isSuccessful()) {
+                             if (task.getResult().size() > 0) {
+                                 String currSelected = childSpinner.getSelectedItem().toString();
+                                 clearLists();
+                                 for (QueryDocumentSnapshot document : task.getResult()) {
+                                     if (document.exists()) {
+                                         childList.add(document.toObject(Child.class));
+                                     }
+                                 }
+                                 getAssociatedChildren();
+                                 ArrayAdapter<String> childListAdapter = new ArrayAdapter<>(LocationActivity.this, android.R.layout.simple_spinner_item, currentChildDisplayNames);
+                                 childListAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                 childSpinner.setAdapter(childListAdapter);
+                                 childSpinner.setSelection(getIndex(childSpinner, currSelected));
+                                 for(Child child : childList) {
+                                     if(currSelected.equals(child.getDisplayName())) {
+                                         setLocation(child.getLatitude(), child.getLongitude());
+                                     }
+                                 }
+                             }
+                         }
+                     }
+                 });
+             }
+        });
+
+        refreshChildButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fStore.collection("children").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                FirebaseUser user = dbAuth.getCurrentUser();
+                                if(document.getId().equals(user.getUid())) {
+                                    currentChild = document.toObject(Child.class);
+                                    setLocation(currentChild.getLatitude(), currentChild.getLongitude());
+                                    break;
+                                }
+                            }
+                        } else {
+                            Log.d(TAG, "Couldn't find child by id: ", task.getException());
+                        }
+                    }
+                });
             }
         });
 
@@ -117,6 +181,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if(task.getResult().exists()) {
                         childSpinner.setVisibility(View.VISIBLE);
+                        refreshButton.setVisibility(View.VISIBLE);
+                        refreshChildButton.setVisibility(View.GONE);
                         final ParentHelper parentHelper = new ParentHelper(null);
                         final String userUid = currentUser.getUid();
                         final AtomicReference<Parent> currentParentReference = new AtomicReference<>(null);
@@ -152,6 +218,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                     }
                     else {
                         childSpinner.setVisibility(View.GONE);
+                        refreshButton.setVisibility(View.GONE);
+                        refreshChildButton.setVisibility(View.VISIBLE);
                         ChildHelper childHelper = new ChildHelper(null);
                         final String userUid = currentUser.getUid();
                         final AtomicReference<Child> currentChildReference = new AtomicReference<>();
@@ -188,9 +256,32 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         super.onResume();
         FirebaseUser currentUser = dbAuth.getCurrentUser();
         if(currentUser == null) {
-            childList.clear();
-            currentChildList.clear();
+            clearLists();
         }
+    }
+
+    private void clearLists() {
+        while(childList.size() != 0) {
+            childList.remove(childList.size() - 1);
+        }
+        while(currentChildList.size() != 0) {
+            currentChildList.remove(currentChildList.size() - 1);
+        }
+        while(currentChildDisplayNames.size() != 0) {
+            currentChildDisplayNames.remove(currentChildDisplayNames.size() - 1);
+        }
+    }
+
+
+    private int getIndex(Spinner spinner, String myString){
+        int index = 0;
+
+        for (int i=0;i<spinner.getCount();i++){
+            if (spinner.getItemAtPosition(i).equals(myString)){
+                index = i;
+            }
+        }
+        return index;
     }
 
     private void setLocation(double currentLocationLatitude, double currentLocationLongitude) {

@@ -21,6 +21,7 @@
     <string name="createChildAccount">CREATE CHILD ACCOUNT</string>
     <string name="registerBackButton">BACK</string>
     <string name="logoutLabel">LOGOUT</string>
+    <string name="refreshButton">REFRESH</string>
 
     <!--  Dialog Strings  -->
     <string name="okButton">Ok</string>
