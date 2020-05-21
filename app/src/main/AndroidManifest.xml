@@ -32,7 +32,8 @@
              android:foregroundServiceType="location" >
          </service>
         <service
-            android:name=".SessionMonitorService" >
+            android:name=".SessionMonitorService"
+            android:stopWithTask="true" >
         </service>
         <meta-data
             android:name="com.google.android.gms.version"

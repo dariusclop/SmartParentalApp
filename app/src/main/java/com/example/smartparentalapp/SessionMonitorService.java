@@ -15,24 +15,32 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
-import java.util.Timer;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class SessionMonitorService extends Service {
     private final static String TAG = "SessionMonitorService";
+    private static int SERVICE_FETCH_DATA_RATE = 5000;
     private Handler serviceHandler;
     private NotificationManager notificationManager;
-    public static int SERVICE_FETCH_DATA_RATE = 5000;
+    private Runnable runnableCode;
+    private FirebaseAuth dbAuth;
+    private FirebaseUser currentUser;
 
     public SessionMonitorService() {}
 
     @Override
     public void onCreate() {
+        dbAuth = FirebaseAuth.getInstance();
+
+        //Create service thread
         HandlerThread handlerThread = new HandlerThread("SessionMonitorService");
         handlerThread.start();
         serviceHandler = new Handler(handlerThread.getLooper());
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         String channelId = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? createNotificationChannel(notificationManager) : "";
 
+        //Create notification for version greater than Oreo
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId);
             Notification notification = notificationBuilder.setOngoing(true)
@@ -60,18 +68,31 @@ public class SessionMonitorService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "Session Monitor Service started");
-//        if(timer == null)
-//        {
-//            timer = new Timer();
-//            timer.schedule(new MonitoringTimerTask(), 500, SERVICE_FETCH_DATA_RATE);
-//        }
-        return START_STICKY;
+
+        //Thread for fetching data
+        runnableCode = new Runnable() {
+            @Override
+            public void run() {
+                currentUser = dbAuth.getCurrentUser();
+
+                if(currentUser == null) {
+                    serviceHandler.removeCallbacks(runnableCode);
+                    stopSelf();
+                }
+                else {
+                    Log.d(TAG, "Session Monitor is running...");
+                    serviceHandler.postDelayed(runnableCode, SERVICE_FETCH_DATA_RATE);
+                }
+            }
+        };
+
+        serviceHandler.post(runnableCode);
+        return START_NOT_STICKY;
     }
 
     @Override
     public void onDestroy() {
         Log.d(TAG, "Session Monitor Service was destroyed");
-        serviceHandler.removeCallbacks(null);
         super.onDestroy();
     }
 
