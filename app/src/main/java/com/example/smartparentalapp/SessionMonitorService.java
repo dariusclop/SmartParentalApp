@@ -1,6 +1,5 @@
 package com.example.smartparentalapp;
 
-import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -26,12 +25,14 @@ public class SessionMonitorService extends Service {
     private Runnable runnableCode;
     private FirebaseAuth dbAuth;
     private FirebaseUser currentUser;
+    private Session currentSession;
 
     public SessionMonitorService() {}
 
     @Override
     public void onCreate() {
         dbAuth = FirebaseAuth.getInstance();
+        currentSession = new Session();
 
         //Create service thread
         HandlerThread handlerThread = new HandlerThread("SessionMonitorService");
@@ -81,6 +82,7 @@ public class SessionMonitorService extends Service {
                 }
                 else {
                     Log.d(TAG, "Session Monitor is running...");
+                    currentSession.updateSession(getBaseContext());
                     serviceHandler.postDelayed(runnableCode, SERVICE_FETCH_DATA_RATE);
                 }
             }
@@ -93,6 +95,8 @@ public class SessionMonitorService extends Service {
     @Override
     public void onDestroy() {
         Log.d(TAG, "Session Monitor Service was destroyed");
+        serviceHandler.removeCallbacks(runnableCode);
+        stopSelf();
         super.onDestroy();
     }
 
