@@ -32,7 +32,6 @@ public class SessionMonitorService extends Service {
     @Override
     public void onCreate() {
         dbAuth = FirebaseAuth.getInstance();
-        currentSession = new Session();
 
         //Create service thread
         HandlerThread handlerThread = new HandlerThread("SessionMonitorService");
@@ -69,6 +68,10 @@ public class SessionMonitorService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "Session Monitor Service started");
+
+        final FirebaseUser childIdSession = dbAuth.getCurrentUser();
+        String childId = childIdSession.getUid();
+        currentSession = new Session(childId);
 
         //Thread for fetching data
         runnableCode = new Runnable() {

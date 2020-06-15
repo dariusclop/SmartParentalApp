@@ -7,6 +7,13 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.SortedMap;
@@ -17,13 +24,25 @@ public class Session {
 
     private final static String TAG = "Session";
     private int totalTime;
-    private HashMap<String, Object> sessionList;
+    private HashMap<String, Integer> sessionList;
     private String sessionId;
+    private String childId;
+    private FirebaseFirestore fStore;
 
-    public Session() {
+    public Session(String childId) {
         this.sessionId = UUID.randomUUID().toString();
         this.totalTime = 0;
         this.sessionList = new HashMap<>();
+        this.childId = childId;
+        fStore = FirebaseFirestore.getInstance();
+    }
+
+    public String getChildId() {
+        return this.childId;
+    }
+
+    public String getSessionId() {
+        return this.sessionId;
     }
 
     public void setTotalTime(int newTotalTime) {
@@ -31,7 +50,9 @@ public class Session {
     }
 
     public synchronized void updateSession(Context context) {
-        setTotalTime(this.totalTime + 5);
+        if(!sessionList.isEmpty()) {
+            setTotalTime(this.totalTime + 5);
+        }
 
         //init managers
         UsageStatsManager usageStatsManager = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
@@ -60,6 +81,66 @@ public class Session {
             }
             foregroundApplicationName = (String) (currentApplicationInfo != null ? packageManager.getApplicationLabel(currentApplicationInfo) : "None");
             Log.i(TAG, foregroundApplicationName);
+            if(sessionList.isEmpty()) {
+                createSessionEntry(foregroundApplicationName);
+            }
+            else {
+                updateSessionEntry(foregroundApplicationName);
+            }
         }
+    }
+
+    public synchronized void createSessionEntry(String applicationName) {
+        sessionList.put(applicationName, 0);
+        DocumentReference sessionReference = fStore.collection("sessions").document(getSessionId());
+        sessionReference.set(this).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.v(TAG, "On success, session was created for at id " + getSessionId() + " for child with id " + getChildId());
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.v(TAG, "On failure, error at creating session -> " + e.toString());
+            }
+        });
+    }
+
+    public synchronized void updateSessionEntry(String applicationName) {
+        if(sessionList.containsKey(applicationName)) {
+            int applicationTime = sessionList.get(applicationName) + 5;
+            sessionList.put(applicationName, applicationTime);
+        }
+        else {
+            sessionList.put(applicationName, 5);
+        }
+
+        //total time update
+        DocumentReference sessionReference = fStore.collection("sessions").document(getSessionId());
+        sessionReference.update("totalTime", this.totalTime).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.v(TAG, "On success, session was updated for at id " + getSessionId() + " for child with id " + getChildId());
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.v(TAG, "On failure, error at updating session -> " + e.toString());
+            }
+        });
+
+        //application data update
+        sessionReference.update("sessionList", sessionList).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.v(TAG, "On success, session was updated for at id " + getSessionId() + " for child with id " + getChildId());
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.v(TAG, "On failure, error at updating session -> " + e.toString());
+            }
+        });
+
     }
 }
