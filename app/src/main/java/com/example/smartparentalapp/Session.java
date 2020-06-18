@@ -14,6 +14,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.SortedMap;
@@ -28,12 +31,19 @@ public class Session {
     private String sessionId;
     private String childId;
     private FirebaseFirestore fStore;
+    private String startTime;
+    private String endTime;
+    private ZoneId zoneId = ZoneId.of( "Europe/Bucharest" );
+    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 
     public Session(String childId) {
         this.sessionId = UUID.randomUUID().toString();
         this.totalTime = 0;
         this.sessionList = new HashMap<>();
         this.childId = childId;
+        ZonedDateTime zdt = ZonedDateTime.now(zoneId);
+        this.startTime = dateTimeFormatter.format(zdt);
+        this.endTime = dateTimeFormatter.format(zdt);
         fStore = FirebaseFirestore.getInstance();
     }
 
@@ -104,6 +114,19 @@ public class Session {
                 Log.v(TAG, "On failure, error at creating session -> " + e.toString());
             }
         });
+
+        //start date-time update
+        sessionReference.update("startTime", this.startTime).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.v(TAG, "On success, start time for session was updated for at id " + getSessionId() + " for child with id " + getChildId());
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.v(TAG, "On failure, error at updating session -> " + e.toString());
+            }
+        });
     }
 
     public synchronized void updateSessionEntry(String applicationName) {
@@ -115,12 +138,28 @@ public class Session {
             sessionList.put(applicationName, 5);
         }
 
+        ZonedDateTime zdt = ZonedDateTime.now(zoneId);
+        String endTime = dateTimeFormatter.format(zdt);
+
         //total time update
         DocumentReference sessionReference = fStore.collection("sessions").document(getSessionId());
         sessionReference.update("totalTime", this.totalTime).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Log.v(TAG, "On success, session was updated for at id " + getSessionId() + " for child with id " + getChildId());
+                Log.v(TAG, "On success, total time for session was updated for at id " + getSessionId() + " for child with id " + getChildId());
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.v(TAG, "On failure, error at updating session -> " + e.toString());
+            }
+        });
+
+        //end date-time update
+        sessionReference.update("endTime", endTime).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.v(TAG, "On success, end time for session was updated for at id " + getSessionId() + " for child with id " + getChildId());
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
