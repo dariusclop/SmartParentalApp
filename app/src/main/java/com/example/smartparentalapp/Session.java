@@ -34,14 +34,14 @@ public class Session {
     private String startTime;
     private String endTime;
     private ZoneId zoneId = ZoneId.of( "Europe/Bucharest" );
-    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+    private ZonedDateTime zdt = ZonedDateTime.now(zoneId);
 
     public Session(String childId) {
         this.sessionId = UUID.randomUUID().toString();
         this.totalTime = 0;
         this.sessionList = new HashMap<>();
         this.childId = childId;
-        ZonedDateTime zdt = ZonedDateTime.now(zoneId);
         this.startTime = dateTimeFormatter.format(zdt);
         this.endTime = dateTimeFormatter.format(zdt);
         fStore = FirebaseFirestore.getInstance();
