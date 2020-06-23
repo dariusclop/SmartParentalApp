@@ -98,6 +98,7 @@ public class SessionMonitorService extends Service {
     @Override
     public void onDestroy() {
         Log.d(TAG, "Session Monitor Service was destroyed");
+        currentSession.updateEndOfSession();
         serviceHandler.removeCallbacks(runnableCode);
         stopSelf();
         super.onDestroy();
