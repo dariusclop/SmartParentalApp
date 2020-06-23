@@ -26,6 +26,7 @@ public class SessionMonitorService extends Service {
     private FirebaseAuth dbAuth;
     private FirebaseUser currentUser;
     private Session currentSession;
+    private SessionHelper sessionHelper;
 
     public SessionMonitorService() {}
 
@@ -86,6 +87,13 @@ public class SessionMonitorService extends Service {
                 else {
                     Log.d(TAG, "Session Monitor is running...");
                     currentSession.updateSession(getBaseContext());
+                    sessionHelper = new SessionHelper(currentSession);
+                    if(currentSession.checkIfListEmpty()) {
+                        sessionHelper.createSessionEntry();
+                    }
+                    else {
+                        sessionHelper.updateSessionEntry();
+                    }
                     serviceHandler.postDelayed(runnableCode, SERVICE_FETCH_DATA_RATE);
                 }
             }
@@ -99,6 +107,7 @@ public class SessionMonitorService extends Service {
     public void onDestroy() {
         Log.d(TAG, "Session Monitor Service was destroyed");
         currentSession.updateEndOfSession();
+        sessionHelper.updateEndOfSession();
         serviceHandler.removeCallbacks(runnableCode);
         stopSelf();
         super.onDestroy();

@@ -7,13 +7,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -30,12 +23,13 @@ public class Session {
     private HashMap<String, Integer> sessionList;
     private String sessionId;
     private String childId;
-    private FirebaseFirestore fStore;
     private String startTime;
     private String endTime;
     private ZoneId zoneId = ZoneId.of( "Europe/Bucharest" );
     private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
     private ZonedDateTime zdt = ZonedDateTime.now(zoneId);
+
+    public Session() {}
 
     public Session(String childId) {
         this.sessionId = UUID.randomUUID().toString();
@@ -44,7 +38,6 @@ public class Session {
         this.childId = childId;
         this.startTime = dateTimeFormatter.format(zdt);
         this.endTime = dateTimeFormatter.format(zdt);
-        fStore = FirebaseFirestore.getInstance();
     }
 
     public String getChildId() {
@@ -60,9 +53,7 @@ public class Session {
     }
 
     public synchronized void updateSession(Context context) {
-        if(!sessionList.isEmpty()) {
-            setTotalTime(this.totalTime + 5);
-        }
+        setTotalTime(this.totalTime + 5);
 
         //init managers
         UsageStatsManager usageStatsManager = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
@@ -100,46 +91,12 @@ public class Session {
         }
     }
 
+    public boolean checkIfListEmpty() {
+        return sessionList.isEmpty();
+    }
+
     public synchronized void createSessionEntry(String applicationName) {
-        sessionList.put(applicationName, 0);
-        DocumentReference sessionReference = fStore.collection("sessions").document(getSessionId());
-        sessionReference.set(this).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.v(TAG, "On success, session was created for at id " + getSessionId() + " for child with id " + getChildId());
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.v(TAG, "On failure, error at creating session -> " + e.toString());
-            }
-        });
-
-        //start date-time update
-        sessionReference.update("startTime", this.startTime).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.v(TAG, "On success, start time for session was updated for at id " + getSessionId() + " for child with id " + getChildId());
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.v(TAG, "On failure, error at updating session -> " + e.toString());
-            }
-        });
-
-        //end date-time update
-        sessionReference.update("endTime", "notFinished").addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.v(TAG, "On success, end time for session was updated for at id " + getSessionId() + " for child with id " + getChildId());
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.v(TAG, "On failure, error at updating session -> " + e.toString());
-            }
-        });
+        sessionList.put(applicationName, 5);
     }
 
     public synchronized void updateSessionEntry(String applicationName) {
@@ -151,52 +108,35 @@ public class Session {
             sessionList.put(applicationName, 5);
         }
 
-        //total time update
-        DocumentReference sessionReference = fStore.collection("sessions").document(getSessionId());
-        sessionReference.update("totalTime", this.totalTime).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.v(TAG, "On success, total time for session was updated for at id " + getSessionId() + " for child with id " + getChildId());
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.v(TAG, "On failure, error at updating session -> " + e.toString());
-            }
-        });
-
-        //application data update
-        sessionReference.update("sessionList", sessionList).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.v(TAG, "On success, session was updated for at id " + getSessionId() + " for child with id " + getChildId());
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.v(TAG, "On failure, error at updating session -> " + e.toString());
-            }
-        });
-
     }
 
     public synchronized void updateEndOfSession() {
         ZonedDateTime zdt = ZonedDateTime.now(zoneId);
         String endTime = dateTimeFormatter.format(zdt);
+        setEndTime(endTime);
+    }
 
-        DocumentReference sessionReference = fStore.collection("sessions").document(getSessionId());
+    public String getEndTime() {
+        return this.endTime;
+    }
 
-        //end date-time update
-        sessionReference.update("endTime", endTime).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.v(TAG, "On success, end time for session was updated for at id " + getSessionId() + " for child with id " + getChildId());
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.v(TAG, "On failure, error at updating session -> " + e.toString());
-            }
-        });
+    public String getStartTime() {
+        return this.startTime;
+    }
+
+    public int getTotalTime() {
+        return this.totalTime;
+    }
+
+    public HashMap<String, Integer> getSessionList() {
+        return this.sessionList;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 }

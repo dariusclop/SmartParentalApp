@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,7 +21,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private Intent sessionService;
     private boolean locationServiceStarted;
     private boolean sessionServiceStarted;
+    private List<Session> sessionList;
+    private List<Session> currentSessionList;
+    private final static String TAG = "MonitoringActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +54,10 @@ public class MainActivity extends AppCompatActivity {
         fStore = FirebaseFirestore.getInstance();
         locationServiceStarted = false;
         sessionServiceStarted = false;
+
+        //Lists
+        sessionList = new ArrayList<>();
+        currentSessionList = new ArrayList<>();
 
         //Menu set click listener
         BottomNavigationView clickedMenuItem = findViewById(R.id.bottom_navigation);
@@ -76,6 +88,23 @@ public class MainActivity extends AppCompatActivity {
                                 if(currentParentReference.get() != null) {
                                     currentParent = currentParentReference.get();
                                     currentChild = null;
+                                    fStore.collection("sessions").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                if(task.getResult().size() > 0) {
+                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                        if (document.exists()) {
+                                                            sessionList.add(document.toObject(Session.class));
+                                                        }
+                                                    }
+                                                    getAssociatedSessions();
+                                                }
+                                            } else {
+                                                Log.d(TAG, "Error fetching sessions: ", task.getException());
+                                            }
+                                        }
+                                    });
                                 }
                             }
                         });
@@ -109,6 +138,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private void getAssociatedSessions() {
+        List<String> currentParentChildIds = currentParent.getChildIds();
+        for(Session session : sessionList) {
+            for(String childIds : currentParentChildIds) {
+                if(session != null && !(session.getEndTime().equals("notFinished")) && session.getChildId().equals(childIds)) {
+                    currentSessionList.add(session);
+                }
+            }
+        }
+
+        Log.d(TAG, "FINISHED");
     }
 
     private void checkPermissions() {
