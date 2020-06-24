@@ -234,6 +234,10 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 }
             });
         }
+        else {
+            Intent notLogged = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivityForResult(notLogged, 0);
+        }
     }
 
     private void getAssociatedChildren() {
