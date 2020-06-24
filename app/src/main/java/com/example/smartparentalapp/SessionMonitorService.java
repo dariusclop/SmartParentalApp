@@ -90,6 +90,7 @@ public class SessionMonitorService extends Service {
                         currentSession.updateSession(getBaseContext());
                         sessionHelper = new SessionHelper(currentSession);
                         sessionHelper.createSessionEntry();
+                        sessionHelper.updateChildDisplayName();
                     }
                     else {
                         currentSession.updateSession(getBaseContext());

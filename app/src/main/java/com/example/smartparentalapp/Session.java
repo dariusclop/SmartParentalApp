@@ -23,6 +23,7 @@ public class Session {
     private HashMap<String, Integer> sessionList;
     private String sessionId;
     private String childId;
+    private String childDisplayName;
     private String startTime;
     private String endTime;
     private ZoneId zoneId = ZoneId.of( "Europe/Bucharest" );
@@ -36,6 +37,7 @@ public class Session {
         this.totalTime = 0;
         this.sessionList = new HashMap<>();
         this.childId = childId;
+        this.childDisplayName = childId;
         this.startTime = dateTimeFormatter.format(zdt);
         this.endTime = dateTimeFormatter.format(zdt);
     }
@@ -47,6 +49,8 @@ public class Session {
     public String getSessionId() {
         return this.sessionId;
     }
+
+    public String getChildDisplayName() { return this.childDisplayName; }
 
     public void setTotalTime(int newTotalTime) {
         this.totalTime = newTotalTime;
