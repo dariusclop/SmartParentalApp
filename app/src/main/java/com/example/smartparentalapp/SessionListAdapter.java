@@ -44,7 +44,7 @@ public class SessionListAdapter extends ArrayAdapter<Session> {
         String title = "Session #" + increasedPosition;
         String startTime = "Start time --> " + currentSession.getStartTime();
         String endTime = "End time --> " + currentSession.getEndTime();
-        String totalTimeForDisplay = String.valueOf(totalTime);
+        String totalTimeForDisplay = String.format("%02d:%02d:%02d", totalTime / 3600, (totalTime % 3600) / 60, totalTime % 60);
 
         LayoutInflater layoutInflater = LayoutInflater.from(mContext);
         convertView = layoutInflater.inflate(mResource, parent, false);
@@ -71,9 +71,10 @@ public class SessionListAdapter extends ArrayAdapter<Session> {
                 final TextView sessionKey = new TextView(mContext);
                 final TextView sessionDuration = new TextView(mContext);
                 Integer itemTime = sessionList.get(key);
+                String formattedTime = String.format("%02d:%02d:%02d", itemTime / 3600, (itemTime % 3600) / 60, itemTime % 60);
 
                 sessionKey.setText(key);
-                sessionDuration.setText(itemTime.toString());
+                sessionDuration.setText(formattedTime);
 
                 if(key.equals("One UI Home")) {
                     sessionKey.setText(R.string.homeScreenText);
