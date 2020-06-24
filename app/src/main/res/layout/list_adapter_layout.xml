@@ -3,30 +3,44 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingTop= "25dp">
 
     <LinearLayout
         android:id= "@+id/linearLayoutTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="100">
+        android:orientation="vertical">
 
         <TextView
             android:id= "@+id/sessionTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="50"
             android:textAlignment="center"
-            android:text="title"/>
+            android:textSize= "28sp"
+            android:fontFamily="sans-serif"
+            android:textStyle="bold"
+            android:text="@string/listAdapterTitle"
+            android:paddingTop= "12dp"/>
 
         <TextView
-            android:id= "@+id/sessionStartEndTime"
-            android:layout_width="wrap_content"
+            android:id= "@+id/sessionStartTime"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:layout_weight="50"
-            android:text="dates"/>
+            android:fontFamily="sans-serif"
+            android:textSize= "16sp"
+            android:paddingTop= "20dp"
+            android:text="@string/listAdapterStartDate"/>
+
+        <TextView
+            android:id= "@+id/sessionEndTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize= "16sp"
+            android:paddingTop= "4dp"
+            android:text="@string/listAdapterEndDate"/>
 
     </LinearLayout>
 

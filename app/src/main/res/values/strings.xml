@@ -52,4 +52,9 @@
     <string name="sessionMonitorServiceTitle">Session Monitor Service</string>
     <string name="sessionMonitorServiceName">Child Monitor is fetching data</string>
 
+    <!--  List Strings  -->
+    <string name="listAdapterTitle">List Title</string>
+    <string name="listAdapterStartDate">List Start Date</string>
+    <string name="listAdapterEndDate">List End Date</string>
+
 </resources>

@@ -37,18 +37,19 @@ public class SessionListAdapter extends ArrayAdapter<Session> {
         Session currentSession = sessionList.get(position);
         int increasedPosition = position + 1;
         String title = "Session #" + increasedPosition;
-        String startTime = currentSession.getStartTime();
-        String endTime = currentSession.getEndTime();
-        String displayDate = startTime + " <-> " + endTime;
+        String startTime = "Start time --> " + currentSession.getStartTime();
+        String endTime = "End time --> " + currentSession.getEndTime();
 
         LayoutInflater layoutInflater = LayoutInflater.from(mContext);
         convertView = layoutInflater.inflate(mResource, parent, false);
 
         TextView titleText = convertView.findViewById(R.id.sessionTitle);
-        TextView datesText = convertView.findViewById(R.id.sessionStartEndTime);
+        TextView startTimeText = convertView.findViewById(R.id.sessionStartTime);
+        TextView endTimeText = convertView.findViewById(R.id.sessionEndTime);
 
         titleText.setText(title);
-        datesText.setText(displayDate);
+        startTimeText.setText(startTime);
+        endTimeText.setText(endTime);
 
         return convertView;
     }
