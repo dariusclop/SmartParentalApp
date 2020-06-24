@@ -139,6 +139,25 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     locationServiceStarted = true;
                                     sessionServiceStarted = true;
+                                    fStore.collection("sessions").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                if(task.getResult().size() > 0) {
+                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                        if (document.exists()) {
+                                                            sessionList.add(document.toObject(Session.class));
+                                                        }
+                                                    }
+                                                    getChildAssociatedSessions(currentChild.getChildId());
+                                                    arrayAdapter = new SessionListAdapter(MainActivity.this, R.layout.list_adapter_layout, currentSessionList);
+                                                    statisticsList.setAdapter(arrayAdapter);
+                                                }
+                                            } else {
+                                                Log.d(TAG, "Error fetching sessions: ", task.getException());
+                                            }
+                                        }
+                                    });
                                 }
                             }
                         });
@@ -155,6 +174,14 @@ public class MainActivity extends AppCompatActivity {
                 if(session != null && !(session.getEndTime().equals("notFinished")) && session.getChildId().equals(childIds)) {
                     currentSessionList.add(session);
                 }
+            }
+        }
+    }
+
+    private void getChildAssociatedSessions(String childId) {
+        for(Session session : sessionList) {
+            if(session != null && !(session.getEndTime().equals("notFinished")) && session.getChildId().equals(childId)) {
+                currentSessionList.add(session);
             }
         }
     }
