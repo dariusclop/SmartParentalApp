@@ -56,6 +56,7 @@
     <string name="listAdapterTitle">List Title</string>
     <string name="listAdapterStartDate">List Start Date</string>
     <string name="listAdapterEndDate">List End Date</string>
+    <string name="listAdapterChildDisplayName">Child Display Name</string>
     <string name="listAdapterTotalTime">Total Time:</string>
     <string name="homeScreenText">Home Screen</string>
     <string name="smartParentApplicationText">Smart Parental</string>

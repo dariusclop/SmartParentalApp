@@ -44,6 +44,7 @@ public class SessionListAdapter extends ArrayAdapter<Session> {
         String title = "Session #" + increasedPosition;
         String startTime = "Start time --> " + currentSession.getStartTime();
         String endTime = "End time --> " + currentSession.getEndTime();
+        String childDisplayName = "Child Name: " + currentSession.getChildDisplayName();
         String totalTimeForDisplay = String.format("%02d:%02d:%02d", totalTime / 3600, (totalTime % 3600) / 60, totalTime % 60);
 
         LayoutInflater layoutInflater = LayoutInflater.from(mContext);
@@ -52,11 +53,13 @@ public class SessionListAdapter extends ArrayAdapter<Session> {
         TextView titleText = convertView.findViewById(R.id.sessionTitle);
         TextView startTimeText = convertView.findViewById(R.id.sessionStartTime);
         TextView endTimeText = convertView.findViewById(R.id.sessionEndTime);
+        TextView childNameText = convertView.findViewById(R.id.sessionChildDisplayName);
         TextView totalTimeText = convertView.findViewById(R.id.sessionTotalTime);
 
         titleText.setText(title);
         startTimeText.setText(startTime);
         endTimeText.setText(endTime);
+        childNameText.setText(childDisplayName);
         totalTimeText.setText(totalTimeForDisplay);
 
         HashMap<String, Integer> sessionList = currentSession.getSessionList();
