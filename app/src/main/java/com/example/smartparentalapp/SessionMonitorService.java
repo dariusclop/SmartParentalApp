@@ -86,12 +86,14 @@ public class SessionMonitorService extends Service {
                 }
                 else {
                     Log.d(TAG, "Session Monitor is running...");
-                    currentSession.updateSession(getBaseContext());
-                    sessionHelper = new SessionHelper(currentSession);
                     if(currentSession.checkIfListEmpty()) {
+                        currentSession.updateSession(getBaseContext());
+                        sessionHelper = new SessionHelper(currentSession);
                         sessionHelper.createSessionEntry();
                     }
                     else {
+                        currentSession.updateSession(getBaseContext());
+                        sessionHelper = new SessionHelper(currentSession);
                         sessionHelper.updateSessionEntry();
                     }
                     serviceHandler.postDelayed(runnableCode, SERVICE_FETCH_DATA_RATE);

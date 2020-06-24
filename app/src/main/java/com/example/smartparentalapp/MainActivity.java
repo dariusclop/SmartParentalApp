@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ListView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -40,8 +41,10 @@ public class MainActivity extends AppCompatActivity {
     private boolean locationServiceStarted;
     private boolean sessionServiceStarted;
     private List<Session> sessionList;
-    private List<Session> currentSessionList;
-    private final static String TAG = "MonitoringActivity";
+    private ArrayList<Session> currentSessionList;
+    private ListView statisticsList;
+    private SessionListAdapter arrayAdapter;
+    private final static String TAG = "DashboardActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
         fStore = FirebaseFirestore.getInstance();
         locationServiceStarted = false;
         sessionServiceStarted = false;
+
+        //Views
+        statisticsList = findViewById(R.id.listViewDashboard);
 
         //Lists
         sessionList = new ArrayList<>();
@@ -99,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
                                                         }
                                                     }
                                                     getAssociatedSessions();
+                                                    arrayAdapter = new SessionListAdapter(MainActivity.this, R.layout.list_adapter_layout, currentSessionList);
+                                                    statisticsList.setAdapter(arrayAdapter);
                                                 }
                                             } else {
                                                 Log.d(TAG, "Error fetching sessions: ", task.getException());
@@ -149,8 +157,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-
-        Log.d(TAG, "FINISHED");
     }
 
     private void checkPermissions() {
