@@ -10,6 +10,7 @@
         android:id= "@+id/linearLayoutTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="24dp"
         android:orientation="vertical">
 
         <TextView
@@ -48,13 +49,16 @@
         android:id= "@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingBottom="24dp"
+        android:weightSum="100">
 
         <LinearLayout
             android:id= "@+id/linearLayoutLeft"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_weight="50">
 
         </LinearLayout>
 
@@ -62,9 +66,40 @@
             android:id= "@+id/linearLayoutRight"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_weight="50">
 
         </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id= "@+id/totalTimeLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="24dp"
+        android:weightSum="100">
+
+    <TextView
+        android:id= "@+id/sessionTotalTimeLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize= "16sp"
+        android:paddingTop= "12dp"
+        android:layout_weight="50"
+        android:text="@string/listAdapterTotalTime"/>
+
+    <TextView
+        android:id= "@+id/sessionTotalTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize= "16sp"
+        android:paddingTop= "12dp"
+        android:layout_weight="50"
+        android:text="@string/listAdapterTotalTime"/>
 
     </LinearLayout>
 

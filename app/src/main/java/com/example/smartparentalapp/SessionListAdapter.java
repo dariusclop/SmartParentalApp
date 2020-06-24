@@ -1,16 +1,20 @@
 package com.example.smartparentalapp;
 
 import android.content.Context;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class SessionListAdapter extends ArrayAdapter<Session> {
@@ -36,9 +40,11 @@ public class SessionListAdapter extends ArrayAdapter<Session> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         Session currentSession = sessionList.get(position);
         int increasedPosition = position + 1;
+        int totalTime = currentSession.getTotalTime();
         String title = "Session #" + increasedPosition;
         String startTime = "Start time --> " + currentSession.getStartTime();
         String endTime = "End time --> " + currentSession.getEndTime();
+        String totalTimeForDisplay = String.valueOf(totalTime);
 
         LayoutInflater layoutInflater = LayoutInflater.from(mContext);
         convertView = layoutInflater.inflate(mResource, parent, false);
@@ -46,10 +52,47 @@ public class SessionListAdapter extends ArrayAdapter<Session> {
         TextView titleText = convertView.findViewById(R.id.sessionTitle);
         TextView startTimeText = convertView.findViewById(R.id.sessionStartTime);
         TextView endTimeText = convertView.findViewById(R.id.sessionEndTime);
+        TextView totalTimeText = convertView.findViewById(R.id.sessionTotalTime);
 
         titleText.setText(title);
         startTimeText.setText(startTime);
         endTimeText.setText(endTime);
+        totalTimeText.setText(totalTimeForDisplay);
+
+        HashMap<String, Integer> sessionList = currentSession.getSessionList();
+
+        if(!sessionList.isEmpty()) {
+
+            LinearLayout mStatisticsFirstColumn = convertView.findViewById(R.id.linearLayoutLeft);
+            LinearLayout mStatisticsSecondColumn = convertView.findViewById(R.id.linearLayoutRight);
+
+            //Populate statistics
+            for(String key : sessionList.keySet()) {
+                final TextView sessionKey = new TextView(mContext);
+                final TextView sessionDuration = new TextView(mContext);
+                Integer itemTime = sessionList.get(key);
+
+                sessionKey.setText(key);
+                sessionDuration.setText(itemTime.toString());
+
+                if(key.equals("One UI Home")) {
+                    sessionKey.setText(R.string.homeScreenText);
+                }
+                if(key.equals("SmartParentalApp")) {
+                    sessionKey.setText(R.string.smartParentApplicationText);
+                }
+
+                sessionKey.setPadding(0, 4, 0, 0);
+                sessionKey.setGravity(Gravity.CENTER);
+                sessionDuration.setPadding(0, 4, 0, 0);
+                sessionDuration.setGravity(Gravity.CENTER);
+
+                mStatisticsFirstColumn.addView(sessionKey);
+                mStatisticsSecondColumn.addView(sessionDuration);
+            }
+        }
+
+
 
         return convertView;
     }
