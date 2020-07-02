@@ -39,7 +39,7 @@ public class Session {
         this.childId = childId;
         this.childDisplayName = childId;
         this.startTime = dateTimeFormatter.format(zdt);
-        this.endTime = dateTimeFormatter.format(zdt);
+        this.endTime = "notFinished";
     }
 
     public String getChildId() {
